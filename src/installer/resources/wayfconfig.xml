@@ -1,0 +1,201 @@
+<?xml version="1.0"?>
+<WayfConfig 
+        xmlns="urn:mace:shibboleth:wayf:config:1.0" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+
+<!-- The default behaviour of Service is controlled via the elements
+     and attributes below.  Non default behaviour is achieved by
+     specifying any or all of these in the specific
+     DiscoveryServiceHandler element.
+
+     The handleCookie, cacheDomain and cacheExpiration attributes are
+     no longer used.  Use the cookie plugin to configure the handling
+     of the SAML cookie.
+
+     The cacheExpiration attribute sets the expiration time of the
+     cookie (if the 'Remember for a week' selection is made).
+
+     The jspFile & errorJspFile attributes control the display
+
+     The provideList attribute controls whether a single list of all
+     possible IdPs is presented.  This also controls whether the
+     Quick search dialog is presented.
+     
+     The provideListOfList attribute controls whether multiple lists
+     are presented (one for each MetadataProvider). Rather than all
+     the entities as one.
+
+     The showUsableIdPs attribute controls the contents of the above
+     lists.  The single list (provideList=true) is trimmed by
+     excluding IdPs which do not share a metadata file with the SP.
+     The multiple lists (provideListOfList=true) is trimmed by
+     excluding all lists which do not specify the SP.
+     
+     The SearchIgnore element contains a list of words to be ignored while
+     performing a search.
+     
+     warnOnBadBinding describes what to do iof the metadata has a badly 
+     formed <DiscoveryResponse> false (or not present) means that the bad 
+     SP is removed from the metadata and an error written to the log file.
+     True means that we just note this in the log file.
+     THIS SETTING IS SYSTEM WIDE ONLY.
+-->
+
+        <Default 
+            jspFile="wayf.jsp"
+            errorJspFile="wayferror.jsp"
+            provideList="true"
+            provideListOfList="false"
+            warnOnBadBinding="false"
+            showUnusableIdPs="false">
+            <SearchIgnore>
+                <IgnoreText>Institution</IgnoreText>
+                <IgnoreText>University</IgnoreText>
+                <IgnoreText>State </IgnoreText>
+                <IgnoreText>School</IgnoreText>
+            </SearchIgnore>
+        </Default>
+        
+<!-- The MetadataProvider is in a similar syntax to that used to
+     configure an IdP.  This means that plugins for the IdP can be
+     used interchangably between the IdP and WAYF.
+
+     The identifier element is used to uniquely distinguish the
+     metadata in a Federation element below
+     
+     If an HTTP URL is provided for the name, a backingFile has to be provided.
+     This is where the file will be spooled to locally.  This spooled file will
+     be used if the DS cannot get hold of the 'real' data.
+     
+     NOTE - for windows installation with an explicit DOS device ("C:\etc\discoveryservice")
+     The url below should be "file://C:\program files/metadata/sites.xml
+     
+-->
+
+        <MetadataProvider 
+                displayName="Federation Name"
+                identifier="FirstSite"
+                url="file://$DS_HOME$/metadata/sites.xml"/>
+
+<!-- If the DS is to handle data from more than one metadata source
+     then more metadataproviders can be provided, as below
+        
+       <MetadataProvider 
+                displayName="Another Name Here"
+                identifier="SecondSite"
+                backingFile="$DS_HOME$/metadata/ukfed_store.xml"
+                url="http://metadata.ukfederation.org.uk/ukfederation-metadata.xml"/>
+
+      White and black list providers are defined as filters inside a provider:
+      
+       <MetadataProvider 
+
+                displayName="WhiteListed Metadata"
+                identifier="White"
+                type="edu.internet2.middleware.shibboleth.metadata.provider.XMLMetadata"
+                backingFile="$DS_HOME$/metadata/whitelist_store.xml"
+                url="http://metadata.ukfederation.org.uk/ukfederation-test.xml">
+
+          <Filter identifier="false" 
+                type="edu.internet2.middleware.shibboleth.wayf.plugins.provider.ListFilter"
+                excludeEntries="true">
+              <EntityId>https://idp.edina.ac.uk/shibboleth</EntityId>
+              <EntityId>https://dlib-adidp.ucs.ed.ac.uk/shibboleth</EntityId>
+              <EntityId>https://idp.edina.ac.uk/shibboleth-devel</EntityId>
+              <EntityId>https://idp.edina.ac.uk/shibboleth-devel-13</EntityId>
+         </Filter>
+       </MetadataProvider>
+
+     NOTE that the resulting metadata has to include any SP which may need service from
+     this DS.   
+     
+     For a black list, set excludeEntries="true" (the listed Entities will be excluded), for 
+     a while list, set it to "false" (the listed entries will be included). 
+
+-->
+
+
+<!-- Plugins are extensible, the identifier is required, as is the
+     type, the rest is for the plugin to define -->
+
+
+     <!-- The Cookie Plugin is part of the standard distribution it interrogates and sets the _saml_idp
+          cookie.  According to parameterization it can just delete the cookie -->
+     <Plugin
+        identifier="CookiePlugin"
+        type="edu.internet2.middleware.shibboleth.wayf.plugins.provider.SamlCookiePlugin"
+        alwaysFollow = "FALSE"
+        deleteCookie = "FALSE"
+	cacheExpiration = "604800"/> 
+
+     <Plugin
+        identifier="DeleteCookiePlugin"
+        type="edu.internet2.middleware.shibboleth.wayf.plugins.provider.SamlCookiePlugin"
+        alwaysFollow = "FALSE"
+        deleteCookie = "TRUE"
+        cacheExpiration = "604800"/> 
+
+	<!-- Other plugins are declared similarly 
+     <Plugin
+                 identifier="AddressHint"
+                 type="uk.ac.sdss.IdPIPLookup"
+                 />  
+     -->
+
+
+<!-- Every handler has to be declared with a DiscoverServiceHandler
+     element.  As well as the attributes and elements described above,
+     each DiscoveryServiceHandler *MUST* have a location attribute.
+     
+     The default wayf.xml specifies that "/WAYF", "/DS" and "/*.wayf" 
+     are the possibilities for DiscoveryServices.  If a URL matches the above,
+     but does not match any location in a DiscoveryServiceHandler,
+     then the first handler for which the default attribute is set
+     true is invoked.
+     
+     The web.xml built into into the war file should not be changed
+     unless you have to change the end points that it uses.
+      -->
+
+
+    <DiscoveryServiceHandler
+        location=".+/WAYF" 
+        default="true">
+        <PluginInstance identifier="CookiePlugin"/>
+        <!--
+            <PluginInstance identifier="AddressHint"/> -->
+    </DiscoveryServiceHandler>
+   
+ <!-- The ClearCache handler causes the cookie to be deleted.  The jsp shipped
+     with the DS refers to this handler -->
+        
+    <DiscoveryServiceHandler
+        location=".+/ClearCache.wayf">
+        <PluginInstance identifier="DeleteCookiePlugin"/>
+    </DiscoveryServiceHandler>  
+
+<!-- Example of how to constrain a DiscoveryService to one (or more)
+     explicit metadata sources.  (The default is to use all metadata
+     sources)
+
+ <DiscoveryServiceHandler location=".+/SecondOnly.wayf" >
+
+        <Federation identifier="SecondSite"/>
+        <PluginInstance identifier="CookiePlugin"/>
+    </DiscoveryServiceHandler>  
+-->
+
+<!--  The Javascript handler downloads javascript arrays with the IdPs and the cookies -->
+    <DiscoveryServiceHandler
+        location=".+/js.wayf"
+        provideList="true"
+        provideListOfList="false"
+        default="false"
+        jspFile="/javascript.jsp">
+        <Federation identifier="FirstSite"/>
+        <PluginInstance identifier="CookiePlugin"/>
+    </DiscoveryServiceHandler>
+
+
+
+</WayfConfig>

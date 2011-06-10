@@ -1,0 +1,11 @@
+Changes in Release 1.1.2
+=============================================
+The precise Cases changed are.
+
+[SDSJ-77] Typo in installation script
+[SDSJ-79] Warn if the SP is in none of the metadataproviders.
+[SDSJ-83] Handle <EntitiesDescriptor>s inside <EntitiesDescriptor>
+[SDSJ-80] Fixed an bug which made it impossible to configure black lists.
+[SDSJ-84] Update incremental search to align with current embedded one
+[SDSJ-85] Latent support for embedded GUI.
+[SDSJ-86] Release Discovery Service 1.1.2

@@ -1,0 +1,6 @@
+Shibboleth Discovery Service Installation
+
+Prior to installation you may need to configure the system as described in deployment guide.
+This is currently available at:
+
+https://spaces.internet2.edu/display/SHIB/DiscoveryService

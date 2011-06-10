@@ -1,0 +1,163 @@
+<HTML>
+<!-- Collect Stylesheet from the DS - this is needed for the autosuggest stuff -->
+<link rel="stylesheet" title="normal" type="text/css"
+    href="static.css" />
+<title>Static Discovery Service with centralised hinting</title>
+<Body>
+<p>
+This is a boring, but static web page which shows how an signle SP can
+configure their own "Discovery Service" without recouse to a Java
+Container but taking full advantage of the centralised cookie server
+in the Federation Discovery Service.
+</p>
+<p>This is not meant to be pretty - it is meant to be easy for SP's
+(who understand HTML) to understand and develop.  It is however
+targetted at a single SP.  Sites running multiple SPs and wanting a
+single Discovery will still need to deploy a real DS, or deploy this
+as an embedded wayf on each SP.
+</p>
+<p>
+There is obviously plenty of room for adding all the visual sugar and
+branding that we want at the three levels</p>
+<ul>
+<li>A World Wide "This is a Discovery" look and feel</li>
+<li>A Federation branding</li>
+<li>"Corporate" Branding</li>
+</ul>
+
+<p>Just for fun, this Discovery service points to the I2Wiki, a Shib 2
+SP (and so with an easier configuration).  To make things even more
+fun it has access to metadata (mostly statically loaded) for 6
+Federations.  (UK, InCommon, MAMS, Switch AcoNet and Renater)</p>
+
+<!-- This is where the real lifting starts.  We start with a
+placemarker where the previously visit --> 
+
+<div id="Hints"> </div>
+
+<h3>Enter Organization Name</h3>
+
+<!-- The below is for a Shib2 SP.  
+
+In order to make the changes you need two know four things
+
+1) The EntityID of your SP.  
+
+   In this case "https://sh2testsp1.iay.org.uk/shibboleth"
+
+2) The return address for the disocvery protocol.  Dpending on how you
+   configure your sessioninitiators this may include other garnish (like
+   &target=cookie)
+
+   In this case "https://sh2testsp1.iay.org.uk/Shibboleth.sso/DS"
+
+3) The address of the Servlet running the centralized DS 
+
+   In this case "https://dlib-adidp.ucs.ed.ac.uk/"
+
+4) The name of the JS and Browser discovery services ("discovery/i2full.wayf" 
+   and "discovery/jsfull.wayf" respectively.
+
+You then need to plug them into the form below:
+
+-->
+
+<form autocomplete="OFF" action="https://dlib-adidp.ucs.ed.ac.uk/discovery/i2full.wayf">
+<!-- This is where your entity goes -->
+<input type="hidden" name="entityID" value="https://sh2testsp1.iay.org.uk/shibboleth" />
+<!-- and your potentially garnished return address -->
+<input type="hidden" name="returnX"  value="https://sh2testsp1.iay.org.uk/Shibboleth.sso/DS" />
+<!-- the rest is fixed -->
+<input type="hidden" name="returnIDParam" value="entityID" />
+<input type="hidden" name="action"   value="search" id="selectOrSearch" />
+<input type="hidden" name="cache"    value="perm" />
+<input type="hidden" name="origin"   value="unspec" id="enterOrigin"/>
+<table border="0" cellpadding="0" cellspacing="0" width="400pr">
+ <tr>
+  <td>
+   <input type="text" name="string" value="" id="enterText" tabindex="50" size="54" />
+  </td><td align="right">
+   <input type="submit" id="enterSubmit" value="Search"/>
+  </td>
+ </tr>
+</table>
+</form>
+<noscript> 
+<!-- Fallback to Shibboleth DS session initiator for non-JavaScript users.  
+     You construct the URL using the  values above -->
+<p>
+Your browser is not javascript enabled.  Go to the Discovery Service <a href="https://dlib-adidp.ucs.ed.ac.uk/discovery/i2full.wayf?entityID=https://spaces.internet2.edu/shibboleth&return=https://spaces.internet2.edu/Shibboleth.sso/Login">here</a>
+</p>
+</noscript>
+<h3>Configuring</h3>
+
+Details on how to set this up this are embedded as comments in this
+web page.  Currently a lot of the configuration is manual.  Future
+versions will be as automatic as possible and the only configuration
+required will be the link which is displayed when there is not
+javascript enabled.
+
+
+<script language="javascript" 
+        type="text/javascript"
+        src="https://dlib-adidp.ucs.ed.ac.uk/discovery/jsfull.wayf?entityID=https://spaces.internet2.edu/shibboleth&return=https://spaces.internet2.edu/Shibboleth.sso/Login">
+        </script>
+
+<!-- Collect the autosuggest code -->
+
+<script language="javascript" 
+        type="text/javascript"
+        src="https://dlib-adidp.ucs.ed.ac.uk/discovery/Suggest.js">
+</script>
+
+<!-- And some code to set up the rest of the page.  You need to plug the DS base address in below -->
+
+<script language="javascript" 
+           type="text/javascript">
+
+<!--  
+window.onload = function() {
+
+  var wayfAddress="https://dlib-adidp.ucs.ed.ac.uk/";
+  var i = 0;
+  var hints = document.getElementById("Hints");
+
+  //
+  // Make the hints visible
+  //
+  if (theHints.length > 1) {
+     var h3 = document.createElement("h3");
+     h3.innerHTML+="Previously visited sites";
+     hints.appendChild(h3);
+  }
+
+  //
+  // And populate them
+  //
+  while (i < theHints.length) {
+    var a = document.createElement("a");
+    a.href = wayfAddress + theHints[i][0];
+    a.innerHTML += theHints[i][1];
+    hints.appendChild(a);
+    hints.appendChild(document.createElement("p"));
+    i++;
+  }
+    
+  //
+  // And set up the autohint.  NOTE you can set up you own
+  // site list by providing your own 2 dimensional array
+  // instead of "theElements" below.
+  //
+  var ie6Hack = [ ];
+  var control = new TypeAheadControl(theElements,
+             document.getElementById("enterText"),
+             document.getElementById("enterOrigin"),
+             document.getElementById("enterSubmit"),
+             document.getElementById("selectOrSearch"),
+             ie6Hack);
+  document.getElementById("enterText").focus();
+}
+-->
+</script>
+</body>
+</html>

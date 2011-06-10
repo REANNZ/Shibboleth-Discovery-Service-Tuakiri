@@ -1,0 +1,42 @@
+Shibboleth Implementation Team
+
+ Documentation
+
+   Nate Klingenstein
+   Internet2
+   
+   Chad La Joie
+   SWITCH
+
+ Programming
+
+   Scott Cantor
+   The Ohio State University
+   
+   Jim Fox
+   University of Washington
+   
+   Chad La Joie
+   SWITCH
+      
+   Will Norris
+   University of Southern California
+   
+   Rod Widdowson
+   University of Edinburgh
+
+ Project Management
+
+   RL "Bob" Morgan
+   University of Washington
+
+   Steven Carmody
+   Brown University
+
+   Ken Klingenstein
+   Internet2
+
+
+Thanks to: 
+
+    Internet2
