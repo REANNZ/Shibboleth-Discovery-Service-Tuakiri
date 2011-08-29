@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+ 
+<html>
+
+<head>
+    <link rel="stylesheet" title="normal" type="text/css"
+    href="wayf.css" /> <title>Reset permanent redirect</title>
+    </head>
+<body>
+
+    <div class="head">
+        <div class="logo"><img src="images/tuakiri.png" alt="Tuakiri New Zealand Federation" /></div>
+<!-- Tuakiri links -->
+<a href="http://tuakiri.ac.nz/confluence/display/Tuakiri/Home">About Tuakiri</a> &nbsp; <a href="http://tuakiri.ac.nz/confluence/display/Tuakiri/Support+Desk">Help</a>
+        <h1>Clear your IdP selection </h1>
+    </div>
+
+    <div class="selector">
+    <p class="text">
+
+You can clear your permanent IdP selection here.
+
+<script language="javascript" type="text/javascript">
+<!--
+  function ClearIdPselection() {
+      document.ClearForm.ClearSubmit.value="Processing..."
+      var success = false;
+      var errmsg = "";
+
+      if (typeof XMLHttpRequest != "undefined") {
+        var clear_client = new XMLHttpRequest();
+        clear_client.open("GET", "ClearCache.wayf?entityID=https://registry.test.tuakiri.ac.nz/shibboleth&returnX=https://registry.test.tuakiri.ac.nz/Shibboleth.sso/Login&returnIDParam=entityID", false); 
+        // NOTE: false as third argument means synchronous mode
+        // NOTE: cannot use POST - Tomcat returns HTTP 405 Method Not Allowed
+
+        clear_client.send();
+        // NOTE:
+        // * clear_client.readyState should be 4 (DONE)
+        // * clear_client.status should be 200 (OK)
+        // * responseText SHOULD NOT contain "Inter-institutional Access System Failure"
+
+        //DEBUG:
+        //alert('State is ' + clear_client.readyState + ' HTTP Status is ' + clear_client.status + ' (' + clear_client.statusText + ')' );
+        //alert('Response is ' + clear_client.responseText);
+
+        if (clear_client.readyState==4 && clear_client.status==200 && clear_client.responseText != "" && clear_client.responseText.search("/Access System Failure/") == -1 ) {
+            document.ClearForm.ClearSubmit.value="Done - Success"
+            alert("Your permanent IdP selection has been successfully removed");
+            success = true;
+        } else {
+            errmsg = "The attempt to transparently remove the redirect cookie has unfortunately failed.";
+        };
+      } else { 
+        errmsg = "Your browser unfortunately does not support transparently removing the redirect cookie.";
+      };
+
+      if (success) {
+        return true; // this causes the form not to be submitted
+      } else {
+        alert(errmsg + "You will be redirected to the Discovery Service in a way that will remove your the redirect cookie - but may look confusing.\nPlease close the browser window after you get the next screen displayed.");
+        return false;
+      };  
+  }
+-->
+</script>
+
+    <form method="get" name="ClearForm" action="ClearCache.wayf" onSubmit="return !ClearIdPselection();" >
+        <input type="hidden" name="entityID" value="https://registry.test.tuakiri.ac.nz/shibboleth" />
+        <input type="hidden" name="returnX" value="https://registry.test.tuakiri.ac.nz/Shibboleth.sso/Login" />
+        <input type="hidden" name="returnIDParam" value="entityID" />
+        <input type="submit" name="ClearSubmit" value="Clear IdP selection" />
+    </form>
+
+    </div>
+
+    <div class="footer">
+        <p class="text">
+<!--CONFIG-->
+        </p>
+    </div>
+
+<!--
+<H1>Old method</H1>
+
+        <form method="get" action="ClearCache.wayf" >
+          <div>
+          
+          
+            <input type="hidden" name="entityID" value="https://registry.test.tuakiri.ac.nz/shibboleth" />
+            <input type="hidden" name="returnX" value="https://registry.test.tuakiri.ac.nz/Shibboleth.sso/Login" />
+            <input type="hidden" name="returnIDParam" value="entityID" />
+          
+          <input tabindex="20" type="submit" value="Clear" />
+          </div>
+        </form>
+-->
+</body>
+

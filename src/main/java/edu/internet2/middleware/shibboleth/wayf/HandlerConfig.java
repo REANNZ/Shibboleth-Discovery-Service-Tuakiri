@@ -56,6 +56,9 @@ public class HandlerConfig {
     
     /** Do we warn on the bad binding. */
     private final boolean warnOnBadBinding;
+
+    /** The ID of the federation to pre-select in the List of Lists */
+    private String defaultFederation;
  
     /** Build the 'default default' configuation. */ 
     public HandlerConfig() {
@@ -69,6 +72,7 @@ public class HandlerConfig {
         lookupSp = true;
         ignoredForMatch = new HashSet <String>(); 
         warnOnBadBinding = false;
+        defaultFederation = null;
     }
         
         
@@ -146,6 +150,13 @@ public class HandlerConfig {
         } else {
             warnOnBadBinding = false;
         }
+
+        attribute = config.getAttribute("defaultFederation");
+        if (attribute != null && !attribute.equals("")) {
+                defaultFederation = attribute;
+        } else {
+                defaultFederation = defaultValue.defaultFederation;
+        }
     }
     
 
@@ -218,5 +229,13 @@ public class HandlerConfig {
     public boolean getWarnOnBadBinding() {  
         return warnOnBadBinding;  
     }
-    
+
+    /**
+     * The ID of the federation to pre-select in the List of Lists
+     * @return the default federation ID
+     */
+    public String getDefaultFederation() {
+            return defaultFederation;
+    }
+
 }

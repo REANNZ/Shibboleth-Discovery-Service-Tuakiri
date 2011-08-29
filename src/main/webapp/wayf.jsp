@@ -158,8 +158,14 @@ Select an identity provider
 
 <!--CONFIG-->
 
-The Service you are trying to reach requires that you
-authenticate with your home organization, enter the name below.
+The service 
+<logic:present name="spServiceName" scope="request">
+   <b>'<%= (String)request.getAttribute("spServiceName") %>'</b>
+</logic:present>
+<logic:present name="spHostname" scope="request">
+   at host <b>'<%= (String)request.getAttribute("spHostname") %>'</b>
+</logic:present>
+you are trying to access requires that you authenticate with your home organisation.
 
     </p>
     <logic:present name="cookieList" scope="request">
@@ -285,7 +291,7 @@ Or choose from a list:
         <logic:present name="sites" scope="request">
         <logic:notPresent name="siteLists" scope="request">
 
-            <form method="get" action="<bean:write name="requestURL" />">
+            <form method="get" name="IdPList" action="<bean:write name="requestURL" />">
               <div>
                 <logic:notPresent name="entityID" scope="request">
                     <input type="hidden" name="shire" value="<bean:write name="shire" />" />
@@ -311,9 +317,10 @@ Or choose from a list:
                  <input type="submit" value="Select" tabindex="50" />
                  <select name="cache" tabindex="60">
                      <option value="false"> Do not remember</option>
-                     <option value="session" selected="selected"> Remember for session</option>
-                     <option value="perm"> Remember for a week</option>
+                     <option value="session"> Remember for session</option>
+                     <option value="perm" selected="selected"> Remember for a month</option>
                  </select>
+                 <input type="checkbox" name="redirect" onClick="return confirmRedirectCheckbox(document.IdPList.redirect)" value="redirect" />Redirect me in the future without asking me again.<br>
               </div>
             </form>
         </logic:notPresent>
@@ -331,14 +338,14 @@ Or choose from a list:
 
      The 'lists of all IdPs' is derived from the one which java gives us (if it did)
      otherwise it is derived by a double iteration through the List of Lists.  This
-     makes for complicated looking code, but it's dead simple really.
+     makes for complicated looking code, but it is dead simple really.
 
  -->
 
 </logic:present>
 
         <logic:present name="siteLists" scope="request">
-          <form method="get" action="<bean:write name="requestURL" />">
+          <form method="get" name="IdPList" action="<bean:write name="requestURL" />">
             <div>
              <logic:notPresent name="entityID" scope="request">
                  <input type="hidden" name="shire" value="<bean:write name="shire" />" />
@@ -412,9 +419,10 @@ Or choose from a list:
                <input type="submit" value="Select" tabindex="50"  />
                <select name="cache" tabindex="60" >
                  <option value="false"> Do not remember</option>
-                 <option value="session" selected="selected"> Remember for session</option>
-                 <option value="perm"> Remember for a week</option>
+                 <option value="session"> Remember for session</option>
+                 <option value="perm" selected="selected"> Remember for a month</option>
                </select>
+               <input type="checkbox" name="redirect" onClick="return confirmRedirectCheckbox(document.IdPList.redirect)" value="redirect" />Redirect me in the future without asking me again.<br>
              </p>
             </div>
            </form>
@@ -478,7 +486,7 @@ No provider was found that matches your search criteria, please try again.
 Search results:
 
                 </h3>
-                <form method="get" action="<bean:write name="requestURL" />">
+                <form method="get" name="SearchResults" action="<bean:write name="requestURL" />">
                   <div>
                     <ul>
                         <logic:iterate id="currResult" name="searchresults">
@@ -506,9 +514,10 @@ Search results:
                    <input type="submit" value="Select" tabindex="100" />
                    <select name="cache" tabindex="100" >
                      <option value="false"> Do not remember</option>
-                     <option value="session" selected="selected"> Remember for session</option>
-                     <option value="perm"> Remember for a week</option>
+                     <option value="session"> Remember for session</option>
+                     <option value="perm" selected="selected"> Remember for a month</option>
                    </select>
+                   <input type="checkbox" name="redirect" onClick="return confirmRedirectCheckbox(document.SearchResults.redirect)" value="redirect" />Redirect me in the future without asking me again.<br>
                       </p>
                    </div>
                 </form>     
@@ -589,6 +598,23 @@ function changedFed(X, Selected) {
   </logic:notPresent>
   
 }
+
+// Function to set the federation in the federations list
+// Select the Option FedName in FedSelect and then calls changedFed to repopulate IdPSelect list of IdPs.
+// Does not do anything if FedName is blank or not found in th federations list
+function setFederation(FedSelect, IdPSelect, FedName) {
+  var i = 0;
+
+  while (i < FedSelect.length) {
+    if (FedSelect.options[i].value == FedName) {
+      FedSelect.selectedIndex = i;
+      changedFed(IdPSelect, FedName);
+      return;
+    };
+    i++;
+  };
+  // no match - not doing anything
+}
 -->
 </script>
 </logic:present>
@@ -640,7 +666,28 @@ var theElements = [
    </script>
 </logic:present>
 
-  
+<logic:present name="showComments" scope="Request">
+   <!-- Load the Javascript function to ask for confirm when the user sets the Redirect checkbox.  -->
+</logic:present>
+   <script language="javascript" type="text/javascript">
+<!--
+   function confirmRedirectCheckbox(checkbox) {
+     return !(checkbox && checkbox.checked) || confirm('Are you sure you want tobe automatically redirected to the selected organisation in the future without being asked again?\nYou can reset your selection at <%= new java.net.URL(new java.net.URL(request.getRequestURL().toString()),"reset.jsp") %>');
+   };
+-->
+</script>
+
+<logic:present name="siteLists" scope="request">
+  <logic:present name="defaultFederation" scope="request">
+   <script language="javascript" type="text/javascript">
+   <!--
+  /* set the default federation on load - when set */
+  setFederation(document.getElementById('FedSelect'),document.getElementById('originIdp'),'<%= (String)request.getAttribute("defaultFederation") %>');
+   -->
+   </script>
+  </logic:present>
+</logic:present>
+
 </body>
 </html>
   
