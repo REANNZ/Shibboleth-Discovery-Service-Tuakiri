@@ -58,7 +58,22 @@ public class SamlCookiePlugin implements Plugin {
     /**
      * As specified in the SAML2 profiles specification.
      */
-    private static final String COOKIE_NAME = "_saml_idp";
+    public static final String COOKIE_NAME = "_saml_idp";
+
+    /**
+      * The cookie to remember the permanent redirect
+      */
+    public static final String REDIRECT_COOKIE_NAME = "_saml_redirect";
+        
+    /**
+     * The parameter name for setting permanent redirect
+     */
+    private static final String REDIRECT_PARAMETER_NAME = "redirect";
+
+    /**
+     * The parameter value for setting permanent redirect
+     */
+    private static final String REDIRECT_PARAMETER_VALUE = "redirect";
 
     /**
      * By default we keep the cookie around for a week.
@@ -189,11 +204,17 @@ public class SamlCookiePlugin implements Plugin {
             return new Context() ;
         } 
         List <String> idps = getIdPCookie(req, res, cacheDomain).getIdPList();
+
+        boolean doRedirect = false;
+        Cookie redirectCookie = getCookie(req, REDIRECT_COOKIE_NAME);
+        if (redirectCookie != null && REDIRECT_PARAMETER_VALUE.equals(redirectCookie.getValue())) { doRedirect = true; };
+        /* if the list of IdP cookies is not 1, do not redirect */
+        if (idps.size() != 1) { doRedirect = false; };
             
         for (String idpName : idps) {
             IdPSite idp = validIdps.get(idpName);
             if (idp != null) {
-                if (alwaysFollow) {
+                if (alwaysFollow || doRedirect) {
                     try {
                         DiscoveryServiceHandler.forwardRequest(req, res, idp);
                     } catch (WayfException e) {
@@ -205,6 +226,19 @@ public class SamlCookiePlugin implements Plugin {
                 //
                 // This IDP is ok 
                 //
+                // We should now add the IdP to the list.  But before doing so,
+                // check it's not already there (from a different federation)
+                // so that we are not adding it twice.
+                // Compare based on IdPSite.getName - which returns the entityID
+
+                boolean alreadyInList = false;
+                for (IdPSite otherIdP:idpList)
+                  if (otherIdP.getName().equals(idp.getName())) {
+                    alreadyInList = true;
+                  };
+                if (alreadyInList) continue;
+                    
+                // now add the IdP to the list of hints
                 idpList.add(idp);
             }
         } 
@@ -277,6 +311,7 @@ public class SamlCookiePlugin implements Plugin {
             
         SamlIdPCookie cookie = getIdPCookie(req, res, cacheDomain);
         String param = req.getParameter(PARAMETER_NAME);
+        String redirectParam = req.getParameter(REDIRECT_PARAMETER_NAME);
         
         if (null == param || param.equals("")) {
             return;
@@ -285,6 +320,20 @@ public class SamlCookiePlugin implements Plugin {
         } else if (param.equalsIgnoreCase(PARAMETER_PERM)) {
             cookie.addIdPName(idP, cacheExpiration);
         }
+
+        if (redirectParam != null && redirectParam.equals(REDIRECT_PARAMETER_VALUE) ) {
+            int redirectExpiration = -1;
+            if (param.equalsIgnoreCase(PARAMETER_PERM)) { redirectExpiration = cacheExpiration; };
+            log.debug("Setting permanent redirect cookie - valid for " + cacheExpiration + " seconds");
+
+            Cookie redirectCookie = new Cookie(REDIRECT_COOKIE_NAME, REDIRECT_PARAMETER_VALUE);
+            redirectCookie.setComment("Used to determine whether to redirect the user to the IdP in future logins without asking again");
+            redirectCookie.setPath("/"); // should be set to the servlet path
+            redirectCookie.setMaxAge(redirectExpiration);
+            // not setting domain on the redirectCookie - this one is for the DS only
+            res.addCookie(redirectCookie);
+        }
+
     }
     
     //
@@ -429,7 +478,7 @@ public class SamlCookiePlugin implements Plugin {
          * @param expiration How long it will live
          */
         private void writeCookie(int expiration) {
-            Cookie cookie = getCookie(req);
+            Cookie cookie = getCookie(req, COOKIE_NAME);
                     
             if (idPList.size() == 0) {
                 //
@@ -493,12 +542,12 @@ public class SamlCookiePlugin implements Plugin {
      * @param req the request.
      * @return the cookie.
      */
-    private static Cookie getCookie(HttpServletRequest req) {
+    private static Cookie getCookie(HttpServletRequest req, String cookieName) {
             
         Cookie[] cookies = req.getCookies();
         if (cookies != null) {
             for (int i = 0; i < cookies.length; i++) {
-                if (cookies[i].getName().equals(COOKIE_NAME)) { 
+                if (cookies[i].getName().equals(cookieName)) { 
                     return cookies[i];
                 }
             }
@@ -512,15 +561,21 @@ public class SamlCookiePlugin implements Plugin {
      * @param res The response.
      */
     private static void deleteCookie(HttpServletRequest req, HttpServletResponse res) {
-        Cookie cookie = getCookie(req);
+        Cookie cookie = getCookie(req, COOKIE_NAME);
             
-        if (cookie == null) { 
-            return; 
+        if (cookie != null) { 
+            cookie.setPath("/");
+            cookie.setMaxAge(0);
+            res.addCookie(cookie);
         }
-            
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        res.addCookie(cookie);
+
+        /* also delete the redirect cookie */
+        Cookie redirectCookie = getCookie(req, REDIRECT_COOKIE_NAME);
+        if (redirectCookie != null) {
+            redirectCookie.setPath("/");
+            redirectCookie.setMaxAge(0);
+            res.addCookie(redirectCookie);
+        }
     }
     /**
      * Load up the cookie and convert it into a SamlIdPCookie.  If there is no
@@ -532,7 +587,7 @@ public class SamlCookiePlugin implements Plugin {
      */
     
     private SamlIdPCookie getIdPCookie(HttpServletRequest req, HttpServletResponse res, String domain) {
-        Cookie cookie = getCookie(req);
+        Cookie cookie = getCookie(req, COOKIE_NAME);
             
         if (cookie == null) {
             return new SamlIdPCookie(req, res, domain);

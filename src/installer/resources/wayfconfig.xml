@@ -34,10 +34,18 @@
      The SearchIgnore element contains a list of words to be ignored while
      performing a search.
      
-     warnOnBadBinding describes what to do iof the metadata has a badly 
+     warnOnBadBinding describes what to do if the metadata has a badly 
      formed <DiscoveryResponse> false (or not present) means that the bad 
      SP is removed from the metadata and an error written to the log file.
      True means that we just note this in the log file.
+
+     defaultFederation (optional) should be the ID of the default federation.
+     If set and if the SP is found in this federation's metadata  and if
+     provideListOfLists is true, this federation will be pre-selected and
+     pre-loaded at the wayf page (instead of displaying the All Sites list).
+     Use this if you are setting up a DS that would be primarily serving one
+     federation but is also loading metadata for other federations.
+
      THIS SETTING IS SYSTEM WIDE ONLY.
 -->
 
@@ -47,7 +55,8 @@
             provideList="true"
             provideListOfList="false"
             warnOnBadBinding="false"
-            showUnusableIdPs="false">
+            showUnusableIdPs="false"
+            defaultFederation="FirstSite">
             <SearchIgnore>
                 <IgnoreText>Institution</IgnoreText>
                 <IgnoreText>University</IgnoreText>
@@ -126,14 +135,14 @@
         type="edu.internet2.middleware.shibboleth.wayf.plugins.provider.SamlCookiePlugin"
         alwaysFollow = "FALSE"
         deleteCookie = "FALSE"
-	cacheExpiration = "604800"/> 
+	cacheExpiration = "2592000"/> 
 
      <Plugin
         identifier="DeleteCookiePlugin"
         type="edu.internet2.middleware.shibboleth.wayf.plugins.provider.SamlCookiePlugin"
         alwaysFollow = "FALSE"
         deleteCookie = "TRUE"
-        cacheExpiration = "604800"/> 
+        cacheExpiration = "2592000"/> 
 
 	<!-- Other plugins are declared similarly 
      <Plugin
@@ -159,7 +168,7 @@
 
 
     <DiscoveryServiceHandler
-        location=".+/WAYF" 
+        location=".+/DS" 
         default="true">
         <PluginInstance identifier="CookiePlugin"/>
         <!--

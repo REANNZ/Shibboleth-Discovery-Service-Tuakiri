@@ -594,6 +594,7 @@ public class DiscoveryServiceHandler {
         String shire = getValue(req, SHIRE_PARAM_NAME);
         String providerId = getSPId(req);
         EntityDescriptor sp = null;
+        IdPSiteSet defaultFederation = null;
         boolean twoZeroProtocol = (shire == null);
         boolean isPassive = (twoZeroProtocol && 
                              "true".equalsIgnoreCase(getValue(req, ISPASSIVE_PARAM_NAME)));
@@ -708,6 +709,10 @@ public class DiscoveryServiceHandler {
                     if (searchResults != null) {
                         searchResults.addAll(search);
                     }
+
+                    if (config.getDefaultFederation() != null && config.getDefaultFederation().equals(metadataProvider.getIdentifier()) ) {
+                        defaultFederation = metadataProvider;
+                    }
                 }
             }
             
@@ -795,6 +800,22 @@ public class DiscoveryServiceHandler {
                 setDisplayLanguage(hintList, req);
                 req.setAttribute("cookieList", hintList);
             }
+
+            // set the SP friendly name attributes: 
+            // * hostname of the service (extracted from entityID)
+            req.setAttribute("spHostname", getHostnameByURI(sp.getEntityID()));
+            try {
+              /* and the ServiceName in the SPSSO Descriptor - if accessible */
+              req.setAttribute("spServiceName", ( (SPSSODescriptor)sp.getRoleDescriptors(SPSSODescriptor.DEFAULT_ELEMENT_NAME).get(0) ).
+                     getAttributeConsumingServices().get(0).getNames().get(0).getName().getLocalString() );
+            } catch (Exception e) { /* empty: could not get service name, will leave attribute unset */ };
+
+            // If the config has a default federation and the federation is included in the site list for this request, tell the wayf JSP about it
+            if (defaultFederation != null) {
+                LOG.debug("Setting the default federation to \"" + defaultFederation.getDisplayName() + "\"");
+                req.setAttribute("defaultFederation", defaultFederation.getDisplayName());
+                /* note: in WAYF.JSP, the federations are identified by Display Name */
+            };
 
             LOG.debug("Displaying WAYF selection page.");
             RequestDispatcher rd = req.getRequestDispatcher(config.getJspFile());
@@ -1013,4 +1034,27 @@ public class DiscoveryServiceHandler {
         } 
         throw new WayfException("Could not locate SP identifier in parameters");
     }   
+
+    private static String getHostnameByURI(String uri)
+    {
+        LOG.debug("Extracting hostname from URI: \"" + uri + "\".");
+        /* reusing uApprove's Controller.getResourceHost code where I've contributed */
+        int i1 = uri.indexOf("//");
+        int i2 = uri.indexOf("/", i1+2);
+
+        // return just the sp.example.org component out of https://sp.example.org/shibboleth
+        if ( i2 >= 0 )
+           uri = uri.substring(i1 + 2, i2);
+        else if ( i1 >= 0 )
+           uri = uri.substring(i1 + 2);
+
+        // return just the sp.example.org component out of urn:mace:federation.org:sp.example.org
+        if (uri.indexOf(':')>=0) {
+            uri = uri.substring(uri.lastIndexOf(':')+1);
+        }
+        LOG.debug("Extracted hostname \"" + uri + "\".");
+      return uri;
+    }
+
+
 }
