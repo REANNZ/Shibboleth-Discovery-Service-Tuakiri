@@ -168,7 +168,7 @@
 
 
     <DiscoveryServiceHandler
-        location=".+/WAYF" 
+        location=".+/DS" 
         default="true">
         <PluginInstance identifier="CookiePlugin"/>
         <!--
