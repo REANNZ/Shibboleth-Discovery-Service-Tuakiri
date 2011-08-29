@@ -14,8 +14,24 @@
     <title>Reset permanent redirection to your IdP</title>
 </head>
 <body>
+<div id="content">
+
+<div id="background_a">
+<div id="background_b">
+<div id="reset_background_c">
 
     <div class="head">
+        <div class="logo"><img src="images/tuakiri.png" alt="Tuakiri New Zealand Federation" /></div>
+        <div class="NZAF_title"><h1>New Zealand Access Federation</h1></div>
+
+<!-- Tuakiri links -->
+<ul class="ds_links">
+	<li><a target="_blank" href="https://www.tuakiri.ac.nz">Home</a></li>
+	<li><a target="_blank" href="https://tuakiri.ac.nz/confluence/display/Tuakiri/About+Us">About</a></li>
+	<li><a target="_blank" href="https://tuakiri.ac.nz/confluence/display/Tuakiri/Support+Desk">Support</a></li>
+<!-- <li><a href="http://tuakiri.ac.nz/confluence/display/Tuakiri/Home">About Tuakiri</a></li>
+<li><a href="http://tuakiri.ac.nz/confluence/display/Tuakiri/Support+Desk">Help</a></li> -->
+</ul>
 
 <h2>Reset permanent redirection to your IdP</h2>
 
@@ -89,5 +105,10 @@ You can clear your permanent organisation selection here.
         </p>
     </div>
 
+</div>
+</div>
+</div>
+
+</div> <!-- end content div -->
 </body>
 
