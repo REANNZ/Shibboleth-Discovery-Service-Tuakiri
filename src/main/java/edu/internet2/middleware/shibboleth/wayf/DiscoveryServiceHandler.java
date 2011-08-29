@@ -801,14 +801,17 @@ public class DiscoveryServiceHandler {
                 req.setAttribute("cookieList", hintList);
             }
 
-            // set the SP friendly name attributes: 
-            // * hostname of the service (extracted from entityID)
-            req.setAttribute("spHostname", getHostnameByURI(sp.getEntityID()));
-            try {
-              /* and the ServiceName in the SPSSO Descriptor - if accessible */
-              req.setAttribute("spServiceName", ( (SPSSODescriptor)sp.getRoleDescriptors(SPSSODescriptor.DEFAULT_ELEMENT_NAME).get(0) ).
-                     getAttributeConsumingServices().get(0).getNames().get(0).getName().getLocalString() );
-            } catch (Exception e) { /* empty: could not get service name, will leave attribute unset */ };
+            // set the SP friendly name attributes 
+            // skip when sp is null (requestor not found in any of the federations loaded here)
+            if (sp != null) {
+                // * hostname of the service (extracted from entityID)
+                req.setAttribute("spHostname", getHostnameByURI(sp.getEntityID()));
+                try {
+                  /* and the ServiceName in the SPSSO Descriptor - if accessible */
+                  req.setAttribute("spServiceName", ( (SPSSODescriptor)sp.getRoleDescriptors(SPSSODescriptor.DEFAULT_ELEMENT_NAME).get(0) ).
+                         getAttributeConsumingServices().get(0).getNames().get(0).getName().getLocalString() );
+                } catch (Exception e) { /* empty: could not get service name, will leave attribute unset */ };
+            };
 
             // If the config has a default federation and the federation is included in the site list for this request, tell the wayf JSP about it
             if (defaultFederation != null) {
