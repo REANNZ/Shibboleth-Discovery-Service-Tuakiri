@@ -981,7 +981,7 @@ public class DiscoveryServiceHandler {
 
         LOG.debug("Displaying WAYF error page.");
         req.setAttribute("errorText", message);
-        req.setAttribute("requestURL", req.getRequestURI().toString());
+        req.setAttribute("requestURL", req.getRequestURL().toString());
         RequestDispatcher rd = req.getRequestDispatcher(config.getErrorJspFile());
 
         try {
