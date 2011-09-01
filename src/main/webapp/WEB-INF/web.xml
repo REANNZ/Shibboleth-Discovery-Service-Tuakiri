@@ -18,10 +18,11 @@
 			<param-name>WAYFLogConfig</param-name>
 			<param-value>$DS_HOME$/conf/logging.xml</param-value>
 		</init-param>
-        <init-param>
-            <param-name>WAYFLogConfigPollFrequency</param-name>
-            <param-value>300000</param-value>
-        </init-param>
+		<init-param>
+			<param-name>WAYFLogConfigPollFrequency</param-name>
+			<param-value>300000</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
 	</servlet>
 
 <!-- We specify two mappings - old style http:/host/shibboleth-wayf/WAYF/ and the new style
