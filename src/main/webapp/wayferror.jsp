@@ -27,7 +27,7 @@
 <logic:notEmpty name="requestURL">
 <p class="error">Discovery Service failure at (<bean:write name="requestURL" />)</p>
 
-<p><bean:write name="errorText" /></p>
+<p><bean:write name="errorText" filter="false" /></p>
 </logic:notEmpty>
 <logic:empty name="requestURL">
 <p class="error">The Discovery Service should not be called directly</p>

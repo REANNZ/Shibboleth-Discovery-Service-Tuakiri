@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Vector;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -42,12 +43,17 @@ import org.opensaml.saml2.common.Extensions;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml2.metadata.SPSSODescriptor;
+import org.opensaml.saml2.metadata.ContactPerson;
+import org.opensaml.saml2.metadata.ContactPersonTypeEnumeration;
+import org.opensaml.saml2.metadata.EmailAddress;
 import org.opensaml.samlext.idpdisco.DiscoveryResponse;
 import org.opensaml.xml.XMLObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import org.apache.commons.lang.StringEscapeUtils;
 
 import edu.internet2.middleware.shibboleth.common.ShibbolethConfigurationException;
 import edu.internet2.middleware.shibboleth.wayf.plugins.Plugin;
@@ -297,7 +303,7 @@ public class DiscoveryServiceHandler {
             // unknown policy
             //
             LOG.error("Unknown policy " + policy);
-            handleError(req, res, "Unknown policy " + policy);
+            handleError(req, res, "Unknown policy " + policy, false);
             return;
         }
         
@@ -328,7 +334,7 @@ public class DiscoveryServiceHandler {
             }
         } catch (WayfException we) {
             LOG.error("Error processing DS request:", we);
-            handleError(req, res, we.getLocalizedMessage());
+            handleError(req, res, we.getMessage(), we.getMessageIsCheckedHTML());
         } catch (WayfRequestHandled we) {
             //
             // Yuck - a sucess path involving an exception
@@ -407,6 +413,7 @@ public class DiscoveryServiceHandler {
         Set<XMLObject> objects = new HashSet<XMLObject>();
         String defaultName = null;
         boolean foundSPName = false;
+        EntityDescriptor sp = null;
         
         for (IdPSiteSet metadataProvider:siteSets) {
             
@@ -422,6 +429,7 @@ public class DiscoveryServiceHandler {
                 //
                 foundSPName = true;
                 EntityDescriptor entity = metadataProvider.getEntity(spName);
+                sp = entity;
                 List<RoleDescriptor> roles = entity.getRoleDescriptors();
                 
                 for (RoleDescriptor role:roles) {
@@ -446,6 +454,15 @@ public class DiscoveryServiceHandler {
         }
         if (!foundSPName) {
             LOG.error("Could not locate SP " + spName + " in metadata");
+
+            // Sanity check: check the SP has been found in at least one federation
+            // NOTE: this check is only invoked in SAML2 SAML-DS requests.  A
+            // similar check is done for SAML1 in the handlelookup call.  We need
+            // to do this check now to know what the situation is when checking the
+            // endpoint shortly on.
+            throw new WayfException("The host <strong>" + StringEscapeUtils.escapeHtml(getHostnameByURI(spName)) + 
+                "</strong> (<tt>" + StringEscapeUtils.escapeHtml(spName) + "</tt>) " +
+                "is not registered in any of the federations recognized at this Discovery Service.", true);
         }
         
         //
@@ -508,7 +525,53 @@ public class DiscoveryServiceHandler {
                 }
             }
             if (!found) {
-                throw new WayfException("Couldn't find endpoint " + nameNoParam + " in metadata");
+                // Be more user friendly: give a detailed message on what is wrong
+                //throw new WayfException("Couldn't find endpoint " + nameNoParam + " in metadata");
+                String contactMsg = "";
+                ContactPerson person = null;
+                try {
+                  // we want to find at least one person, preferrably TECHNICAL / SUPPORT / ADMINISTRATIVE / OTHER / BILLING in order of preference
+                  List<ContactPersonTypeEnumeration> cpTypeOrder = new Vector<ContactPersonTypeEnumeration>();
+                  cpTypeOrder.add(ContactPersonTypeEnumeration.TECHNICAL);
+                  cpTypeOrder.add(ContactPersonTypeEnumeration.SUPPORT);
+                  cpTypeOrder.add(ContactPersonTypeEnumeration.ADMINISTRATIVE);
+                  cpTypeOrder.add(ContactPersonTypeEnumeration.OTHER);
+                  cpTypeOrder.add(ContactPersonTypeEnumeration.BILLING);
+
+                  for (ContactPerson thisPerson: ((SPSSODescriptor)sp.getRoleDescriptors(SPSSODescriptor.DEFAULT_ELEMENT_NAME).get(0) ).
+                                      getContactPersons() ) {
+
+                      if (person == null ) { person = thisPerson ; continue; };
+                      if (cpTypeOrder.indexOf(thisPerson) < cpTypeOrder.indexOf(person) ) {
+                          // we have found a contact person with a better rank
+                          person = thisPerson;
+                      };
+                  };
+
+                  if ( person != null ) {
+                      String emailAddrStr = null;
+                      for (EmailAddress emailAddr: person.getEmailAddresses() ) {
+                          if (emailAddrStr == null) {
+                              emailAddrStr = StringEscapeUtils.escapeHtml(emailAddr.getAddress());
+                              break;
+                          };
+                      };
+                      contactMsg = "This service is run by " + StringEscapeUtils.escapeHtml( person.getGivenName().getName() + " " + person.getSurName().getName()) +
+                          ( person.getCompany() != null ? " from " + StringEscapeUtils.escapeHtml( person.getCompany().getName() ) : "" ) +
+                          ( emailAddrStr != null ? " who can be contacted at <A href=\"mailto:" + emailAddrStr + "\">" + emailAddrStr + "</A>" : "" ) + 
+                          ".";
+                  };
+
+                } catch (Exception e) { LOG.error("Error while trying to look up contact person for SP " + spName, e); };
+
+
+                // try to get the contact details:
+                // EntityDescriptor->SPSSODescriptor->ContactPerson (ideally ContactType="support").  Fields: Company, GivenName, SurName, EmailAddress
+
+                throw new WayfException("The host <strong>" + StringEscapeUtils.escapeHtml(getHostnameByURI(spName)) + 
+                    "</strong> (<tt>" + StringEscapeUtils.escapeHtml(spName) + "</tt>) " +
+                "is registered in a federation known to this Discovery Service, but is using an invalid DiscoveryServiceResponse endpoint (<tt>" + 
+                StringEscapeUtils.escapeHtml(nameNoParam) + "</tt>)." + contactMsg, true);
             }
         } else if (returnIndex != null && returnIndex.length() != 0) {
             
@@ -715,6 +778,20 @@ public class DiscoveryServiceHandler {
                     }
                 }
             }
+            
+            // Sanity check: check the SP has been found in at least one
+            // federation - and we will not be displaying a blank list of sites
+            // NOTE: this can typically happen only for SAML1 - for SAML2, the
+            // endpoint address checking is done before we get here.
+            //
+            // As the configuration allows us to run with config.getLookupSp() set to false, step in only either of these two scenarios:
+            // (i) We are doing the lookups and we have not found the SP
+            // (ii) The list of sites is empty (so even when not doing the lookup, we would present the user with an empty interface)
+            if ( ( (sp == null) && config.getLookupSp() ) || sites.isEmpty() ) {
+                throw new WayfException("The host <strong>" + StringEscapeUtils.escapeHtml(getHostnameByURI(providerId)) + 
+                    "</strong> (<tt>" + StringEscapeUtils.escapeHtml(providerId) + "</tt>) " +
+                    "is not registered in any of the federations recognized at this Discovery Service.", true);
+            };
             
             if (isPassive) {
                 //
@@ -975,10 +1052,10 @@ public class DiscoveryServiceHandler {
      * @param res response under construction
      * @param message - what so say
      */
-    private void handleError(HttpServletRequest req, HttpServletResponse res, String message) {
+    private void handleError(HttpServletRequest req, HttpServletResponse res, String message, boolean messageIsCheckedHTML) {
 
         LOG.debug("Displaying WAYF error page.");
-        req.setAttribute("errorText", message);
+        req.setAttribute("errorText", messageIsCheckedHTML ? message : StringEscapeUtils.escapeHtml(message));
         req.setAttribute("requestURL", req.getRequestURL().toString());
         RequestDispatcher rd = req.getRequestDispatcher(config.getErrorJspFile());
 
