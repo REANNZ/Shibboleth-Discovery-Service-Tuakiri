@@ -957,6 +957,22 @@ public class DiscoveryServiceHandler {
         String providerId = getSPId(req);
         boolean twoZeroProtocol = (shire == null);
 
+        try {
+            // Log the user session for statistics
+            // Format: date_created, idpname, spname, request_type, remoteHost, robot/user-agent
+            String userAgent = req.getHeader("User-Agent");
+            String requestAction = req.getParameter("action");
+            LOG.info("Session established: " +
+                System.currentTimeMillis()/1000 /* current time since epoch */ + ";" +
+                URLEncoder.encode(site.getName(), "UTF-8") /* IdP entityID */ + ";" +
+                URLEncoder.encode(providerId, "UTF-8") /* SP entityID */ + ";" +
+                (twoZeroProtocol ? "DS" : "WAYF" ) + " " +
+                    ( (requestAction != null) && requestAction.equals("selection") ?
+                      "Request" : "Cookie") + ";" +
+                req.getRemoteHost() + ";" +
+                ( userAgent == null ? "" : URLEncoder.encode(userAgent, "UTF-8")));
+        } catch (UnsupportedEncodingException e) { LOG.error("Could not log session", e); };
+
         if (!twoZeroProtocol) {
             String handleService = site.getAddressForWAYF(); 
             if (handleService != null ) {
