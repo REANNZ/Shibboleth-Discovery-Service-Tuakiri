@@ -36,6 +36,11 @@
         <!-- Appender, DS_LOG, is inherited from the root logger -->
     </logger>
 
+    <!-- Log INFO messages for DiscoveryServiceHandler - this is where sessions are logged -->
+    <logger name="edu.internet2.middleware.shibboleth.wayf.DiscoveryServiceHandler">
+        <level value="INFO" />
+    </logger>
+
     <!-- Logs OpenSAML, but not DS, messages -->
     <logger name="org.opensaml">
         <level value="INFO" />
