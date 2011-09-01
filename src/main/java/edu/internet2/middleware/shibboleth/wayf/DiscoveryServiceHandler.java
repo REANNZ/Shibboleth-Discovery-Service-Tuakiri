@@ -784,10 +784,17 @@ public class DiscoveryServiceHandler {
             // NOTE: this can typically happen only for SAML1 - for SAML2, the
             // endpoint address checking is done before we get here.
             //
-            // As the configuration allows us to run with config.getLookupSp() set to false, step in only either of these two scenarios:
+	    // As the configuration allows us to run with config.getLookupSp()
+	    // set to false, step in only either of these scenarios:
             // (i) We are doing the lookups and we have not found the SP
-            // (ii) The list of sites is empty (so even when not doing the lookup, we would present the user with an empty interface)
-            if ( ( (sp == null) && config.getLookupSp() ) || sites.isEmpty() ) {
+            // (ii) We would be displaying the list of federations and it is empty
+            // (iii) We would be displaying the list of sites and it is empty
+	    // The rationale for cases (ii) and (iii) is that even when not
+	    // doing the lookup to decide whether to show the federation, we
+	    // would present the user with an empty interface
+            if ( ( config.getLookupSp() && (sp == null) ) ||
+                 ( config.getProvideListOfLists() && siteLists.isEmpty() ) ||
+                 ( config.getProvideList() && sites.isEmpty() ) ) {
                 throw new WayfException("The host <strong>" + StringEscapeUtils.escapeHtml(getHostnameByURI(providerId)) + 
                     "</strong> (<tt>" + StringEscapeUtils.escapeHtml(providerId) + "</tt>) " +
                     "is not registered in any of the federations recognized at this Discovery Service.", true);
