@@ -185,8 +185,11 @@ public class IdPSite {
      */
     public String getAddressForWAYF() {
         List<SingleSignOnService> ssoList;
+
+        IDPSSODescriptor idpssoDesc = entity.getIDPSSODescriptor(XMLConstants.SHIB_NS);
+        if (idpssoDesc == null) { return null; };
         
-        ssoList = entity.getIDPSSODescriptor(XMLConstants.SHIB_NS).getSingleSignOnServices();
+        ssoList = idpssoDesc.getSingleSignOnServices();
         
         for (SingleSignOnService signOnService: ssoList) {
             if (XMLConstants.IDP_SSO_BINDING.equals(signOnService.getBinding())) {

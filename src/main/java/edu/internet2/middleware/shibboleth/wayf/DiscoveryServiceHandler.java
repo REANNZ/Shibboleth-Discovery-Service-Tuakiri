@@ -1005,7 +1005,8 @@ public class DiscoveryServiceHandler {
                     throw new WayfException("Error forwarding to IdP: \n" + ioe.getMessage());
                 }
             } else {
-                String s = "Error finding to IdP: " + site.getDisplayName(req); 
+                String s = "Error redirecting to the selected IdP: " + site.getDisplayName(req) + 
+                           " - the IdP is not supporting the protocol requested by the SP: " + XMLConstants.SHIB_NS;
                 LOG.error(s);
                 throw new WayfException(s);
             }
