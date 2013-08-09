@@ -204,7 +204,7 @@ you are trying to access requires that you authenticate with your home organisat
                 <bean:define id="ei" name="entityID" />
                 <bean:define id="re" name="returnX"/>
 
-                 <a tabindex="10" href="<bean:write name="requestURL" />?entityID=<%= java.net.URLEncoder.encode(ei.toString(), "utf-8") %>&return=<%= java.net.URLEncoder.encode(re.toString(), "utf-8") %>&returnIDxParam=<%= java.net.URLEncoder.encode( returnIDParam.toString(), "utf-8" ) %>&cache=perm&action=selection&origin=<jsp:getProperty name="site" property="name" />">
+                 <a tabindex="10" href="<bean:write name="requestURL" />?entityID=<%= java.net.URLEncoder.encode(ei.toString(), "utf-8") %>&return=<%= java.net.URLEncoder.encode(re.toString(), "utf-8") %>&returnIDParam=<%= java.net.URLEncoder.encode( returnIDParam.toString(), "utf-8" ) %>&cache=perm&action=selection&origin=<jsp:getProperty name="site" property="name" />">
                     <jsp:getProperty name="site" property="displayName" />
                 </a>
               </logic:present>
