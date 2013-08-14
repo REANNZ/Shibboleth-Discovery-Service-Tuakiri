@@ -30,6 +30,12 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
+import java.util.Date;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.Duration;
+import javax.xml.datatype.DatatypeConfigurationException;
+import org.opensaml.saml2.metadata.provider.AbstractReloadingMetadataProvider;
+
 import org.opensaml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml2.metadata.IDPSSODescriptor;
@@ -185,6 +191,9 @@ public class IdPSiteSet implements ObservableMetadataProvider.Observer {
                 if (null != filterChain) {
                     provider.setMetadataFilter(filterChain);
                 }
+
+                setMetadataProviderReloadingParameters(el, provider);
+
                 provider.initialize();
                 metadata = provider;
             } else {
@@ -199,6 +208,9 @@ public class IdPSiteSet implements ObservableMetadataProvider.Observer {
                 if (null != filterChain) {
                     provider.setMetadataFilter(filterChain);
                 }
+
+                setMetadataProviderReloadingParameters(el, provider);
+                    
                 provider.initialize();
                 metadata = provider;
             }
@@ -212,6 +224,73 @@ public class IdPSiteSet implements ObservableMetadataProvider.Observer {
         metadata.getObservers().add(this);
         onEvent(metadata);
     }
+
+    /** Parse rmaxRefreshDelay, refreshDelayFactor, and minRefreshDelay from the XML configuration element and apply them to the metadata provider */
+    private void setMetadataProviderReloadingParameters(Element el, AbstractReloadingMetadataProvider provider) throws ShibbolethConfigurationException {
+
+	String refreshDelayFactorString = el.getAttribute("refreshDelayFactor");
+	String maxRefreshDelayString = el.getAttribute("maxRefreshDelay");
+	String minRefreshDelayString = el.getAttribute("minRefreshDelay");
+	long maxRefreshDelay = 0;
+	int minRefreshDelay = 0;
+	float refreshDelayFactor = 0.0f;
+	try {
+	    DatatypeFactory dtFactory = null;
+
+	    try {
+		if (maxRefreshDelayString != null && !maxRefreshDelayString.equals("") ) {
+		    dtFactory = DatatypeFactory.newInstance();
+		    Duration maxRefreshDelayDuration = dtFactory.newDuration(maxRefreshDelayString);
+
+		    // Convert the Duration to milliseconds, using the
+		    // current Date() as the start instant for the duration
+		    // - a start instant is only needed for Durations that
+		    // refer to periods with variable length, irrelevant in
+		    // this context
+		    maxRefreshDelay = maxRefreshDelayDuration.getTimeInMillis(new Date()); 
+                    LOG.debug("Setting maxRefreshDelay="+maxRefreshDelay+"ms " +
+                            "for provider " + this.identifier);
+		    provider.setMaxRefreshDelay(maxRefreshDelay);
+
+		};
+	    } catch (IllegalArgumentException e) {
+		throw new ShibbolethConfigurationException("Badly formatted maxRefreshDelay " +
+                        maxRefreshDelayString, e);
+	    };
+
+	    try {
+		// parse minRefreshDelay the same way as maxRefreshDelay
+		if (minRefreshDelayString != null && !minRefreshDelayString.equals("")) {
+		    if (dtFactory == null) dtFactory = DatatypeFactory.newInstance();
+		    Duration minRefreshDelayDuration = dtFactory.newDuration(minRefreshDelayString);
+		    minRefreshDelay = (int)minRefreshDelayDuration.getTimeInMillis(new Date()); 
+                    LOG.debug("Setting minRefreshDelay="+minRefreshDelay+"ms " +
+                            "for provider " + this.identifier);
+		    provider.setMinRefreshDelay(minRefreshDelay);
+		};
+	    } catch (IllegalArgumentException e) {
+		throw new ShibbolethConfigurationException("Badly formatted minRefreshDelay " +
+                        minRefreshDelayString, e);
+	    };
+
+	    try {
+		if (refreshDelayFactorString != null && !refreshDelayFactorString.equals("")) {
+		    refreshDelayFactor = Float.parseFloat(refreshDelayFactorString);
+                    LOG.debug("Setting refreshDelayFactor="+refreshDelayFactor+
+                            " for provider " + this.identifier);
+		    provider.setRefreshDelayFactor(refreshDelayFactor);
+		};
+	    } catch (NumberFormatException e) {
+		throw new ShibbolethConfigurationException("Badly formatted refreshDelayFactor " +
+                        refreshDelayFactorString, e);
+	    };
+
+	} catch (DatatypeConfigurationException e) {
+	    throw new ShibbolethConfigurationException("Cannot initialize DatatypeFactory", e);
+	};
+
+    };
+
 
     /**
      * Based on 1.2 Origin.isMatch.  There must have been a reason for it...
