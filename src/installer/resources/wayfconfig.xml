@@ -92,8 +92,28 @@
        <MetadataProvider 
                 displayName="Another Name Here"
                 identifier="SecondSite"
+                minRefreshDelay="PT0H5M0.000S"
+                maxRefreshDelay="PT2H0M0.000S"
+                refreshDelayFactor="0.125"
                 backingFile="$DS_HOME$/metadata/ukfed_store.xml"
                 url="http://metadata.ukfederation.org.uk/ukfederation-metadata.xml"/>
+
+      The maxRefreshDelay factor option (in XML duration notation, 
+      XML Schema 1.0 section 3.2.6, http://www.w3.org/TR/xmlschema-2/#duration
+      allows to override the maximum refresh delay - normally derived from the
+      validUntil of the metadata and capped at 4 hours.
+
+      Combined with the maxRefreshDelay option, the refreshDelayFactor
+      option allows to specify the fraction fo the maxRefreshDelay
+      after which a refresh should be attempted.  
+
+      The minRefreshDelay setting then allows to throttle the refresh
+      rate to wait at least minRefreshDelay (e.g. 5 minutes) between
+      two successive refresh attempts.
+
+      For example, a refreshDelayFactor of 0.125 applied to a
+      maxRefreshDelay of 2 hours makes metadata refresh every 15 minutes.
+
 
       White and black list providers are defined as filters inside a provider:
       
