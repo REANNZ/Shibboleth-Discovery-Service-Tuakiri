@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>edu.internet2.middleware</groupId>
     <artifactId>shibboleth-discovery-service</artifactId>
-    <version>1.1.2-tuakiri-0.9.8.1</version>
+    <version>1.1.2-tuakiri-0.9.8.2</version>
     <!-- We bundle as a jar here, the installer creates the WAR -->
     <packaging>jar</packaging>
 
@@ -25,7 +25,7 @@
             <id>shibboleth.internet2.edu</id>
             <name>Internet2</name>
             <layout>default</layout>
-            <url>http://shibboleth.internet2.edu/downloads/maven2</url>
+            <url>https://build.shibboleth.net/nexus/content/groups/public</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
