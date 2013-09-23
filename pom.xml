@@ -82,7 +82,7 @@
             <version>2.4</version>
             <scope>provided</scope>
         </dependency>
-                
+
         <!-- Runtime dependencies -->
         <dependency>
             <groupId>${xerces.groupId}</groupId>
@@ -413,6 +413,16 @@
     </scm>
     
     <developers>
+        <developer>
+            <id>vladimir-mencl-eresearch</id>
+            <name>Vladimir Mencl</name>
+            <organization>University of Canterbury</organization>
+            <organizationUrl>http://www.canterbury.ac.nz/</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>+12</timezone>
+        </developer>
         <developer>
             <id>cantor</id>
             <name>Scott Cantor</name>
