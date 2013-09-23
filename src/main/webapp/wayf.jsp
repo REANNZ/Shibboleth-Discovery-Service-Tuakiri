@@ -193,7 +193,7 @@ Recently used organizations:
                 <bean:define id="ei" name="entityID" />
                 <bean:define id="re" name="returnX"/>
 
-                 <a tabindex="10" href="<bean:write name="requestURL" />?entityID=<%= java.net.URLEncoder.encode(ei.toString(), "utf-8") %>&return=<%= java.net.URLEncoder.encode(re.toString(), "utf-8") %>&returnIDParam=<%= java.net.URLEncoder.encode( returnIDParam.toString(), "utf-8" ) %>&cache=perm&action=selection&origin=<jsp:getProperty name="site" property="name" />">
+                 <a tabindex="10" href="<bean:write name="requestURL" />?entityID=<%= java.net.URLEncoder.encode(ei.toString(), "utf-8") %>&amp;return=<%= java.net.URLEncoder.encode(re.toString(), "utf-8") %>&amp;returnIDParam=<%= java.net.URLEncoder.encode( returnIDParam.toString(), "utf-8" ) %>&amp;cache=perm&amp;action=selection&amp;origin=<jsp:getProperty name="site" property="name" />">
                     <jsp:getProperty name="site" property="displayName" />
                 </a>
               </logic:present>
@@ -201,7 +201,7 @@ Recently used organizations:
                 <bean:define id="targ" name="target" />
                 <bean:define id="shire" name="shire" />
                 <bean:define id="pid" name="providerId" />
-                <a tabindex="10" href="<bean:write name="requestURL" />?target=<%= java.net.URLEncoder.encode(targ.toString(),"utf-8") %>&shire=<%= java.net.URLEncoder.encode(shire.toString(),"utf-8") %>&providerId=<%= java.net.URLEncoder.encode(pid.toString(),"utf-8") %>&time=<bean:write name="time" />&cache=perm&action=selection&origin=<jsp:getProperty name="site" property="name" />">
+                <a tabindex="10" href="<bean:write name="requestURL" />?target=<%= java.net.URLEncoder.encode(targ.toString(),"utf-8") %>&amp;shire=<%= java.net.URLEncoder.encode(shire.toString(),"utf-8") %>&amp;providerId=<%= java.net.URLEncoder.encode(pid.toString(),"utf-8") %>&amp;time=<bean:write name="time" />&amp;cache=perm&amp;action=selection&amp;origin=<jsp:getProperty name="site" property="name" />">
                     <jsp:getProperty name="site"
                     property="displayName" />
                 </a>
