@@ -203,19 +203,36 @@ you are trying to access requires that you authenticate with your home organisat
                 <bean:define id="returnIDParam" name="returnIDParam"/>
                 <bean:define id="ei" name="entityID" />
                 <bean:define id="re" name="returnX"/>
-
-                 <a tabindex="10" href="<bean:write name="requestURL" />?entityID=<%= java.net.URLEncoder.encode(ei.toString(), "utf-8") %>&return=<%= java.net.URLEncoder.encode(re.toString(), "utf-8") %>&returnIDParam=<%= java.net.URLEncoder.encode( returnIDParam.toString(), "utf-8" ) %>&cache=perm&action=selection&origin=<jsp:getProperty name="site" property="name" />">
+                 <a tabindex="10" href="<bean:write name="requestURL" />?entityID=<%= java.net.URLEncoder.encode(ei.toString(), "utf-8") %>&amp;return=<%= java.net.URLEncoder.encode(re.toString(), "utf-8") %>&amp;returnIDParam=<%= java.net.URLEncoder.encode( returnIDParam.toString(), "utf-8" ) %>&amp;cache=perm&amp;action=selection&amp;origin=<jsp:getProperty name="site" property="name" />" onClick="IdPForm = document.forms['recent-<jsp:getProperty name="site" property="name" />']; IdPForm.redirect.value = ( document.IdPList.redirect.checked ? 'redirect' : '' ); IdPForm.cache.value = document.IdPList.cache.value ; IdPForm.submit(); return false;">
                     <jsp:getProperty name="site" property="displayName" />
                 </a>
+                <form method="get" id="recent-<jsp:getProperty name="site" property="name" />" action="<bean:write name="requestURL" />" >
+                    <input type="hidden" name="entityID" value="<bean:write name="ei" />">
+                    <input type="hidden" name="return" value="<bean:write name="re" />">
+                    <input type="hidden" name="returnIDParam" value="<bean:write name="returnIDParam" />">
+                    <input type="hidden" name="cache" value="perm">
+                    <input type="hidden" name="action" value="selection">
+                    <input type="hidden" name="origin" value="<jsp:getProperty name="site" property="name" />">
+                    <input type="hidden" name="redirect" value=""> <!-- value="redirect" -->
+                </form>
               </logic:present>
               <logic:notPresent name="entityID" scope="request">
                 <bean:define id="targ" name="target" />
                 <bean:define id="shire" name="shire" />
                 <bean:define id="pid" name="providerId" />
-                <a tabindex="10" href="<bean:write name="requestURL" />?target=<%= java.net.URLEncoder.encode(targ.toString(),"utf-8") %>&shire=<%= java.net.URLEncoder.encode(shire.toString(),"utf-8") %>&providerId=<%= java.net.URLEncoder.encode(pid.toString(),"utf-8") %>&time=<bean:write name="time" />&cache=perm&action=selection&origin=<jsp:getProperty name="site" property="name" />">
+                <a tabindex="10" href="<bean:write name="requestURL" />?target=<%= java.net.URLEncoder.encode(targ.toString(),"utf-8") %>&amp;shire=<%= java.net.URLEncoder.encode(shire.toString(),"utf-8") %>&amp;providerId=<%= java.net.URLEncoder.encode(pid.toString(),"utf-8") %>&amp;time=<bean:write name="time" />&amp;cache=perm&amp;action=selection&amp;origin=<jsp:getProperty name="site" property="name" />" onClick="IdPForm = document.forms['recent-<jsp:getProperty name="site" property="name" />']; IdPForm.redirect.value = ( document.IdPList.redirect.checked ? 'redirect' : '' ); IdPForm.cache.value = document.IdPList.cache.value ; IdPForm.submit(); return false;">
                     <jsp:getProperty name="site"
                     property="displayName" />
                 </a>
+                <form method="get" id="recent-<jsp:getProperty name="site" property="name" />" action="<bean:write name="requestURL" />" >
+                    <input type="hidden" name="shire" value="<bean:write name="shire" />">
+                    <input type="hidden" name="providerId" value="<bean:write name="pid" />">
+                    <input type="hidden" name="time" value="<bean:write name="time" />">
+                    <input type="hidden" name="cache" value="perm">
+                    <input type="hidden" name="action" value="selection">
+                    <input type="hidden" name="origin" value="<jsp:getProperty name="site" property="name" />">
+                    <input type="hidden" name="redirect" value=""> <!-- value="redirect" -->
+                </form>
               </logic:notPresent>
             </p>
         </logic:iterate>

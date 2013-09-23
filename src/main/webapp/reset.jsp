@@ -70,7 +70,7 @@
         Cookie cookie = getCookie(request, SamlCookiePlugin.COOKIE_NAME);
 
         if (cookie != null) {
-            cookie.setPath("/");
+            cookie.setPath(request.getContextPath()+"/");
             cookie.setMaxAge(0);
             response.addCookie(cookie);
         }
@@ -78,7 +78,7 @@
         /* also delete the redirect cookie */
         Cookie redirectCookie = getCookie(request, SamlCookiePlugin.REDIRECT_COOKIE_NAME);
         if (redirectCookie != null) {
-            redirectCookie.setPath("/");
+            redirectCookie.setPath(request.getContextPath()+"/");
             redirectCookie.setMaxAge(0);
             response.addCookie(redirectCookie);
         }
