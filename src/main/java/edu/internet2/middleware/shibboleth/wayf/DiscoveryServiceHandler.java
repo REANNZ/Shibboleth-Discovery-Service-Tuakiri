@@ -317,28 +317,33 @@ public class DiscoveryServiceHandler {
         }
         
         try {
+	    try {
 
-            if (requestType.equals("search")) {
-                    
-                String parameter = req.getParameter("string"); 
-                if (parameter != null && parameter.equals("")) {
-                        parameter = null;
-                }
-                handleLookup(req, res, parameter);
-                    
-            } else if (requestType.equals("selection")) {
-                    
-                handleSelection(req, res);
-            } else {
-                handleLookup(req, res, null);
-            }
+		if (requestType.equals("search")) {
+			
+		    String parameter = req.getParameter("string"); 
+		    if (parameter != null && parameter.equals("")) {
+			    parameter = null;
+		    }
+		    handleLookup(req, res, parameter);
+			
+		} else if (requestType.equals("selection")) {
+			
+		    handleSelection(req, res);
+		} else {
+		    handleLookup(req, res, null);
+		}
+	    } catch (WayfRequestHandled we) {
+		//
+		// Yuck - a sucess path involving an exception
+		//
+		// Ah, anyway, we need to at least check whether the exception has a nested WayfException as the cause
+		if (we.getCause() != null && we.getCause() instanceof WayfException) { throw (WayfException)we.getCause(); };
+	    };
+
         } catch (WayfException we) {
             LOG.error("Error processing DS request:", we);
             handleError(req, res, we.getMessage(), we.getMessageIsCheckedHTML());
-        } catch (WayfRequestHandled we) {
-            //
-            // Yuck - a sucess path involving an exception
-            //
         }
 
     }

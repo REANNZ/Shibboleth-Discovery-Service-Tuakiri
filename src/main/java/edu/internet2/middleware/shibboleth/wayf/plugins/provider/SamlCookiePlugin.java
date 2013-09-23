@@ -219,7 +219,10 @@ public class SamlCookiePlugin implements Plugin {
                         DiscoveryServiceHandler.forwardRequest(req, res, idp);
                     } catch (WayfException e) {
                         // Do nothing we are going to throw anyway
-                        ;
+                        // Nope: we need to report up that there was an issue
+                        // Pass the caught exception as a cause of WayfRequestHandled
+                        // to signal that
+                        throw new WayfRequestHandled("Problem forwarding to IdP stored in SAML cookie", e);
                     }
                     throw new WayfRequestHandled();
                 }
