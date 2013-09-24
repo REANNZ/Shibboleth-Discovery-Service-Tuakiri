@@ -47,7 +47,7 @@ public class WayfException extends Exception {
     }
 
     /**
-     * Constructure with just a description.
+     * Constructor with just a description.
      * @param s description
      */
     public WayfException(String s) {
@@ -66,7 +66,7 @@ public class WayfException extends Exception {
     }
 
     /**
-     * Constructure with a description and boolean messageIsCheckedHTML flag.
+     * Constructor with a description and boolean messageIsCheckedHTML flag.
      * @param s description
      * @param messageIsCheckedHTML Is the message HTML that has been checked for user supplied content and can be safely sent back to the browser
      */

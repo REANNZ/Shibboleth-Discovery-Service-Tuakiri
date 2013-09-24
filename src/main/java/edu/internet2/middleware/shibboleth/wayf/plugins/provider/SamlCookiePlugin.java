@@ -219,7 +219,10 @@ public class SamlCookiePlugin implements Plugin {
                         DiscoveryServiceHandler.forwardRequest(req, res, idp);
                     } catch (WayfException e) {
                         // Do nothing we are going to throw anyway
-                        ;
+                        // Nope: we need to report up that there was an issue
+                        // Pass the caught exception as a cause of WayfRequestHandled
+                        // to signal that
+                        throw new WayfRequestHandled("Problem forwarding to IdP stored in SAML cookie", e);
                     }
                     throw new WayfRequestHandled();
                 }
@@ -312,27 +315,36 @@ public class SamlCookiePlugin implements Plugin {
         SamlIdPCookie cookie = getIdPCookie(req, res, cacheDomain);
         String param = req.getParameter(PARAMETER_NAME);
         String redirectParam = req.getParameter(REDIRECT_PARAMETER_NAME);
+        int cookieExpiration = -1;
         
-        if (null == param || param.equals("")) {
-            return;
-        } else if (param.equalsIgnoreCase(PARAMETER_SESSION)) {
-            cookie.addIdPName(idP, -1);
-        } else if (param.equalsIgnoreCase(PARAMETER_PERM)) {
-            cookie.addIdPName(idP, cacheExpiration);
-        }
+        if (null == param || param.equals("")) return;
+
+        if (param.equalsIgnoreCase(PARAMETER_SESSION) || param.equalsIgnoreCase(PARAMETER_PERM) ) {
+            cookie.addIdPName(idP);
+        };
+
+        if (param.equalsIgnoreCase(PARAMETER_PERM)) cookieExpiration = cacheExpiration;
+        
 
         if (redirectParam != null && redirectParam.equals(REDIRECT_PARAMETER_VALUE) ) {
-            int redirectExpiration = -1;
-            if (param.equalsIgnoreCase(PARAMETER_PERM)) { redirectExpiration = cacheExpiration; };
-            log.debug("Setting permanent redirect cookie - valid for " + cacheExpiration + " seconds");
+            log.debug("Setting permanent redirect cookie - valid for " + cookieExpiration + " seconds");
+
+            // make sure the IdP list is just 1 entry long - ditch other entries if not
+            if (cookie.getIdPList().size()>1) {
+                log.info("IdP list is longer then 1, removing all except the most recent IdP to enable permanent redirect");
+                cookie.getIdPList().clear();
+                cookie.addIdPName(idP);
+            }; 
 
             Cookie redirectCookie = new Cookie(REDIRECT_COOKIE_NAME, REDIRECT_PARAMETER_VALUE);
             redirectCookie.setComment("Used to determine whether to redirect the user to the IdP in future logins without asking again");
-            redirectCookie.setPath("/"); // should be set to the servlet path
-            redirectCookie.setMaxAge(redirectExpiration);
+            redirectCookie.setPath(req.getContextPath()+"/"); // should be set to the servlet path
+            redirectCookie.setMaxAge(cookieExpiration);
             // not setting domain on the redirectCookie - this one is for the DS only
             res.addCookie(redirectCookie);
         }
+
+        cookie.writeCookie(cookieExpiration);
 
     }
     
@@ -447,12 +459,10 @@ public class SamlCookiePlugin implements Plugin {
          * @param idPName    - The name to be added
          * @param expiration - The expiration of the cookie or zero if it is to be unchanged
          */
-        private void addIdPName(String idPName, int expiration) {
+        private void addIdPName(String idPName) {
 
             idPList.remove(idPName);
             idPList.add(0, idPName);
-
-            writeCookie(expiration);
         }
             
         /**
@@ -467,9 +477,8 @@ public class SamlCookiePlugin implements Plugin {
          * @param expiration How long it will live.
          */
             
-        public void deleteIdPName(String origin, int expiration) {
+        public void deleteIdPName(String origin) {
             idPList.remove(origin);
-            writeCookie(expiration);
         }
 
         /**
@@ -477,16 +486,21 @@ public class SamlCookiePlugin implements Plugin {
          * 
          * @param expiration How long it will live
          */
-        private void writeCookie(int expiration) {
+        public void writeCookie(int expiration) {
             Cookie cookie = getCookie(req, COOKIE_NAME);
                     
             if (idPList.size() == 0) {
                 //
                 // Nothing to write, so delete the cookie
                 //
-                cookie.setPath("/");
-                cookie.setMaxAge(0);
-                res.addCookie(cookie);
+                if (cookie != null) {
+                    cookie.setPath(req.getContextPath()+"/");
+                    cookie.setMaxAge(0);
+                    log.debug("Deleting SAML Cookie " + COOKIE_NAME);
+                    res.addCookie(cookie);
+                } else {
+                    log.debug("SAML Cookie " + COOKIE_NAME + " does not exist - nothing to delete");
+                };
                 return;
             }
 
@@ -511,12 +525,13 @@ public class SamlCookiePlugin implements Plugin {
             }
                     
             if (cookie == null) { 
+                log.debug("SAML Cookie was null, creating new cookie");
                 cookie = new Cookie(COOKIE_NAME, value);
             } else {
                 cookie.setValue(value);
             }
             cookie.setComment("Used to cache selection of a user's Shibboleth IdP");
-            cookie.setPath("/");
+            cookie.setPath(req.getContextPath()+"/");
 
 
             cookie.setMaxAge(expiration);
@@ -524,6 +539,7 @@ public class SamlCookiePlugin implements Plugin {
             if (domain != null && domain != "") {
                 cookie.setDomain(domain);
             }
+            log.debug("Adding SAML Cookie " + COOKIE_NAME);
             res.addCookie(cookie);
             
         }
