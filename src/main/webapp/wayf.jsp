@@ -689,7 +689,7 @@ var theElements = [
    <script language="javascript" type="text/javascript">
 <!--
    function confirmRedirectCheckbox(checkbox) {
-     return !(checkbox && checkbox.checked) || confirm('Are you sure you want tobe automatically redirected to the selected organisation in the future without being asked again?\nYou can reset your selection at <%= new java.net.URL(new java.net.URL(request.getRequestURL().toString()),"reset.jsp") %>');
+     return !(checkbox && checkbox.checked) || confirm('Are you sure you want to be automatically redirected to the selected organisation in the future without being asked again?\n\nYou can reset your selection at <%= new java.net.URL(new java.net.URL(request.getRequestURL().toString()),"reset.jsp") %>\nOr by deleting your cookies for this host: <%= request.getServerName() %>');
    };
 -->
 </script>
