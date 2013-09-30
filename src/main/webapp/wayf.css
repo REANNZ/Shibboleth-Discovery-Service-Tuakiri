@@ -8,7 +8,7 @@ body {
 }
 
 #content {
-	margin: 0px auto;
+	margin: auto;
 	width: 651px;
 	vertical-align: middle;
 	background-color: #FFF;
@@ -42,19 +42,17 @@ li {
 }
 
 .ds_links {
-	padding: 0;
-	border-bottom-style: solid;
-	border-bottom-width: 4px;
-	border-bottom-color: #7CAB1D;
 	padding: 0.75em 0;
-	clear:left;
+	float:right;
+	display:inline;
+	margin-top:15%;
 }
 
 .ds_links li {
 	display: inline;
 	list-style-type: none;
 	clear: both;
-	padding: 0 0.5em;
+	padding: 0 1em;
 }
 
 .ds_links li a {
@@ -80,7 +78,12 @@ h2 {
 	font-weight: bold;
 	font-family: "Trebuchet MS", "Tahoma", "Helvetica", "Arial", sans-serif;
 	color: #000;
-	margin: 1em 0em 0.25em 0em;
+	margin: 0.5em 0em 0.25em 0em;
+	padding-top: 1em;
+	clear:left;
+	border-top-style: solid;
+	border-top-width: 4px;
+	border-top-color: #7CAB1D;
 }
 
 h3 { 
@@ -116,7 +119,7 @@ span.option {
 }
 
 input#clear {
-	margin-left: 380px;
+	margin-left: 532px;
 	background:url('images/DS_button.png') top left no-repeat;
 	height:24px;
 	width:62px;
@@ -131,8 +134,21 @@ input#clear:hover {
 	text-decoration:underline;
 }
 
+table#tab {
+        width:100%;
+	border-spacing:0.25em;
+}
+
+select#FedSelect {
+        width:100%;
+}
+
+select#originIdp {
+        width:100%;
+}
+
 input.select {
-	margin-left: 220px; 
+	margin-left: 370px; 
 	background:url('images/DS_button.png') top left no-repeat;
 	height:24px;
 	width:62px;
@@ -158,12 +174,6 @@ span.warning {
 	float: left;
 	text-align: left;
 	margin: 26px 0px 16px 0px;
-}
-
-.NZAF_title {
-	float: right;
-	width: 67%;
-	margin: 17px 0px 8px 0px;
 }
 
 .reset_title {
