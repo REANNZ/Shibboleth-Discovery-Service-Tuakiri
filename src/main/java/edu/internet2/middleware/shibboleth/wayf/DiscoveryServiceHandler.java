@@ -136,6 +136,11 @@ public class DiscoveryServiceHandler {
         = "urn:oasis:names:tc:SAML:profiles:SSO:idp-discoveryprotocol:single";
     
     /**
+     * The prefix used on mailto: URIs
+     */
+    private static final String MAILTO_URI_PREFIX = "mailto:";
+
+    /**
      * Mandatory Serialization constant.
      */
     private static final  Logger LOG = LoggerFactory.getLogger(DiscoveryServiceHandler.class.getName());
@@ -566,7 +571,16 @@ public class DiscoveryServiceHandler {
                       String emailAddrStr = null;
                       for (EmailAddress emailAddr: person.getEmailAddresses() ) {
                           if (emailAddrStr == null) {
+                              // escape any evil characters - should not be any
                               emailAddrStr = StringEscapeUtils.escapeHtml(emailAddr.getAddress());
+
+                              // Strip off the mailto: prefix to get the real emailAddress.
+                              // According to metadata, the prefix should be there (XML Schema type of emailAddress is AnyURI),
+                              // but is only populated since FR 2.3.
+                              if ( emailAddrStr.startsWith(MAILTO_URI_PREFIX) ) {
+                                  emailAddrStr = emailAddrStr.substring(MAILTO_URI_PREFIX.length());
+                              };
+
                               break;
                           };
                       };
