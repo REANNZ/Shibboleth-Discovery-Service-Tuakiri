@@ -468,8 +468,8 @@ public class DiscoveryServiceHandler {
                         }
                     }
                 }
+                break;
             }
-            break;
         }
         if (!foundSPName) {
             LOG.error("Could not locate SP " + spName + " in metadata");
