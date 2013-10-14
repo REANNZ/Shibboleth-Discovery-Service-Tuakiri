@@ -174,11 +174,18 @@ public class DiscoveryServiceHandler {
      * @throws ShibbolethConfigurationException - if we find something odd in the config file. 
      */
     protected DiscoveryServiceHandler(Element config, 
-                                      Hashtable <String, IdPSiteSet> federations,
+                                      List <IdPSiteSet> federations,
                                       Hashtable <String, Plugin> plugins, 
                                       HandlerConfig defaultConfig) throws ShibbolethConfigurationException
     {
         siteSets = new ArrayList <IdPSiteSet>(federations.size());
+
+        // create a map based on the configuration-ordered list of federations
+        Map <String,IdPSiteSet> federationsMap = new Hashtable<String, IdPSiteSet>();
+        for (IdPSiteSet federation: federations ) { 
+            federationsMap.put(federation.getIdentifier(), federation); 
+        };
+
         this.plugins = new ArrayList <Plugin>(plugins.size());
 
         //
@@ -216,7 +223,7 @@ public class DiscoveryServiceHandler {
                     
             attribute = ((Element) list.item(i)).getAttribute("identifier");
                     
-                IdPSiteSet siteset = federations.get(attribute);
+                IdPSiteSet siteset = federationsMap.get(attribute);
                 
                 if (siteset == null) {
                     LOG.error("Handler " + location + ": could not find metadata for <Federation> with identifier " + attribute + ".");
@@ -231,7 +238,7 @@ public class DiscoveryServiceHandler {
             //
             // No Federations explicitly named pick em all
             //
-            siteSets.addAll(federations.values());
+            siteSets.addAll(federations);
         }
         
         //
@@ -425,6 +432,7 @@ public class DiscoveryServiceHandler {
             //
             // Only do work if the SP makes sense
             //
+            LOG.debug("Checking federation "+metadataProvider.getIdentifier()+" for SP "+spName);
 
             if (metadataProvider.containsSP(spName)) {
                
@@ -456,6 +464,7 @@ public class DiscoveryServiceHandler {
                     }
                 }
             }
+            break;
         }
         if (!foundSPName) {
             LOG.error("Could not locate SP " + spName + " in metadata");
