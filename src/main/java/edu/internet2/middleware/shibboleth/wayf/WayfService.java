@@ -275,7 +275,7 @@ public class WayfService extends HttpServlet {
             //
             // Load metadata
             //
-            Hashtable <String, IdPSiteSet> siteSets = new Hashtable <String, IdPSiteSet>();
+            List <IdPSiteSet> siteSets = new ArrayList <IdPSiteSet>();
     
             itemElements = doc.getDocumentElement().getElementsByTagNameNS(XMLConstants.CONFIG_NS,
                             "MetadataProvider");
@@ -286,7 +286,7 @@ public class WayfService extends HttpServlet {
                 
                 IdPSiteSet siteset = new IdPSiteSet(element, parser, defaultHandlerConfig.getWarnOnBadBinding());
                 
-                siteSets.put(siteset.getIdentifier(), siteset);
+                siteSets.add(siteset);
             }
             if (siteSets.size() < 1) {
                 LOG.error("No Metadata Provider metadata loaded.");
