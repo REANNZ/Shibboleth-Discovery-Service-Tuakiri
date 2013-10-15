@@ -723,7 +723,13 @@ var theElements = [
    </script>
   </logic:present>
 </logic:present>
-    
+
+<!-- display DS version -->
+<logic:present name="dsVersion" scope="request">
+<!-- <%= (String)request.getAttribute("dsVersion") %> -->
+</logic:present>
+<!-- Internal Hostname: <%= (String)request.getAttribute("internalHostname") %> -->
+
 </body>
 </html>
   

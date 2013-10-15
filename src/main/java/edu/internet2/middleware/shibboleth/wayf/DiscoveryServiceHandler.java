@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Properties;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -139,6 +140,10 @@ public class DiscoveryServiceHandler {
      * The prefix used on mailto: URIs
      */
     private static final String MAILTO_URI_PREFIX = "mailto:";
+    /**
+     * The application version (as obtained from Maven properties)
+     */
+    private static String dsVersion;
 
     /**
      * Mandatory Serialization constant.
@@ -279,6 +284,17 @@ public class DiscoveryServiceHandler {
                 site.addPlugin(plugin);
             }
         }
+
+
+        // initialize version
+        Properties mvnProperties = new Properties();
+        try {
+            mvnProperties.load(this.getClass().getClassLoader().getResourceAsStream("META-INF/maven/edu.internet2.middleware/shibboleth-discovery-service/pom.properties"));
+            dsVersion = mvnProperties.getProperty("version");
+        } catch (Exception e) {
+            LOG.error("Could not get DS version from maven properties", e);
+        };
+        LOG.debug("DiscoveryServiceHandler: version " + dsVersion + " initialization complete");
     }
     
     
@@ -468,8 +484,8 @@ public class DiscoveryServiceHandler {
                         }
                     }
                 }
+                break;
             }
-            break;
         }
         if (!foundSPName) {
             LOG.error("Could not locate SP " + spName + " in metadata");
@@ -929,6 +945,10 @@ public class DiscoveryServiceHandler {
                 req.setAttribute("defaultFederation", defaultFederation.getDisplayName());
                 /* note: in WAYF.JSP, the federations are identified by Display Name */
             };
+
+            // pass system info to JSP page to display
+            if (dsVersion != null) { req.setAttribute("dsVersion", dsVersion); };
+            req.setAttribute("internalHostname", java.net.InetAddress.getLocalHost().getCanonicalHostName());
 
             LOG.debug("Displaying WAYF selection page.");
             RequestDispatcher rd = req.getRequestDispatcher(config.getJspFile());
