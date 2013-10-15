@@ -946,7 +946,9 @@ public class DiscoveryServiceHandler {
                 /* note: in WAYF.JSP, the federations are identified by Display Name */
             };
 
+            // pass system info to JSP page to display
             if (dsVersion != null) { req.setAttribute("dsVersion", dsVersion); };
+            req.setAttribute("internalHostname", java.net.InetAddress.getLocalHost().getCanonicalHostName());
 
             LOG.debug("Displaying WAYF selection page.");
             RequestDispatcher rd = req.getRequestDispatcher(config.getJspFile());
