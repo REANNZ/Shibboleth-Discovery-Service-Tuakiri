@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -140,10 +141,16 @@ public class DiscoveryServiceHandler {
      * The prefix used on mailto: URIs
      */
     private static final String MAILTO_URI_PREFIX = "mailto:";
+
     /**
      * The application version (as obtained from Maven properties)
      */
     private static String dsVersion;
+
+    /**
+     * The hostname of the local system (or, more precisely, the reverse lookup of the IP address that the hostname resolved to).
+     */
+    private static String localHostName;
 
     /**
      * Mandatory Serialization constant.
@@ -293,6 +300,14 @@ public class DiscoveryServiceHandler {
             dsVersion = mvnProperties.getProperty("version");
         } catch (Exception e) {
             LOG.error("Could not get DS version from maven properties", e);
+        };
+        LOG.debug("DiscoveryServiceHandler: version " + dsVersion + " initialization complete");
+
+        // initialize local hostname
+        try {
+            localHostName = InetAddress.getLocalHost().getCanonicalHostName();
+        } catch (IOException e) {
+            LOG.error("Could not get internal hostname", e);
         };
         LOG.debug("DiscoveryServiceHandler: version " + dsVersion + " initialization complete");
     }
@@ -948,7 +963,7 @@ public class DiscoveryServiceHandler {
 
             // pass system info to JSP page to display
             if (dsVersion != null) { req.setAttribute("dsVersion", dsVersion); };
-            req.setAttribute("internalHostname", java.net.InetAddress.getLocalHost().getCanonicalHostName());
+            if (localHostName != null) { req.setAttribute("internalHostname", localHostName); };
 
             LOG.debug("Displaying WAYF selection page.");
             RequestDispatcher rd = req.getRequestDispatcher(config.getJspFile());
@@ -1129,6 +1144,11 @@ public class DiscoveryServiceHandler {
         LOG.debug("Displaying WAYF error page.");
         req.setAttribute("errorText", messageIsCheckedHTML ? message : StringEscapeUtils.escapeHtml(message));
         req.setAttribute("requestURL", req.getRequestURL().toString());
+
+        // pass system info to JSP page to display
+        if (dsVersion != null) { req.setAttribute("dsVersion", dsVersion); };
+        if (localHostName != null) { req.setAttribute("internalHostname", localHostName); };
+
         RequestDispatcher rd = req.getRequestDispatcher(config.getErrorJspFile());
 
         try {
