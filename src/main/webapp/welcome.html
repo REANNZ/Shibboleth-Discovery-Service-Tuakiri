@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Discovery Service</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="images/favicon.ico">
+    
+<link href="files/bootstrap.css" type="text/css" rel="stylesheet" media="screen, projection">
+<link href="files/bootstrap-responsive.css" type="text/css" rel="stylesheet" media="screen, projection">
+<style type="text/css" media="screen, projection">.zero {
+  margin: 0px;
+  padding: 0px;
+}
+.centered {
+  text-align: center;
+}
+.hidden {
+  visibility: hidden;
+}
+.underline {
+  text-decoration: underline;
+}
+/** 
+BOOTSTRAP OVERRIDES
+We do this here instead of customising Bootstrap LESS to
+make working with the Grails Bootstrap plugin easier.
+**/
+.breadcrumb a {
+  color: #628615;
+  text-decoration: none;
+}
+.breadcrumb a:hover {
+  color: #3F5908;
+  text-decoration: underline;
+}
+.hero-unit {
+  word-wrap: break-word;
+}
+nav .navbar {
+  margin-bottom: 0px;
+}
+nav .navbar .nav {
+  margin: 0px;
+  padding: 0px;
+}
+nav .nav > li > a:hover {
+  text-decoration: underline;
+  background-color: transparent;
+}
+nav .navbar-inner {
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  -webkit-border-top-left-radius: 6px;
+  -webkit-border-top-right-radius: 6px;
+  -moz-border-radius-topleft: 6px;
+  -moz-border-radius-topright: 6px;
+  padding: 6px;
+  border: 0px;
+  background-color: #7cab1d;
+  background-image: none;
+  box-shadow: none;
+  min-height: 20px;
+  filter: none;
+}
+nav .dropdown-menu {
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  -moz-border-radius-bottomright: 3px;
+  padding: 6px;
+  border: 0px;
+  background-color: #7cab1d;
+  background-image: none;
+  box-shadow: none;
+  min-height: 20px;
+}
+nav .dropdown-submenu > .dropdown-menu {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  left: 100%;
+  top: 5px;
+  margin-left: 2px;
+}
+nav .dropdown-submenu > a:after {
+  visibility: hidden;
+}
+nav .navbar .nav > li > .dropdown-menu::after,
+nav .navbar .nav > li > .dropdown-menu::before {
+  visibility: hidden;
+}
+nav .navbar .nav > li > a,
+nav .nav-collapse .nav > li > a,
+nav .nav-collapse .dropdown-menu a {
+  margin: 0px;
+  padding: 0px;
+  color: #ffffff;
+  text-shadow: none;
+  padding: 8px 8px 8px;
+  font-weight: normal;
+}
+nav .dropdown-menu a,
+nav .nav-collapse .dropdown-menu a {
+  color: #ffffff;
+  text-shadow: none;
+  margin: 0;
+  font-weight: normal;
+}
+nav .dropdown-menu li > a:hover,
+nav .dropdown-menu li > a:focus,
+nav .dropdown-submenu:hover > a,
+nav .nav-collapse .nav > li > a:hover,
+nav .nav-collapse .dropdown-menu a:hover {
+  text-decoration: underline;
+  background-color: #7cab1d;
+  background-image: none;
+  font-weight: normal;
+  box-shadow: none;
+  color: #ffffff;
+  filter: none;
+}
+nav .navbar .nav > li > a:hover,
+nav .nav-collapse .nav > li > a:hover {
+  text-decoration: underline;
+  background-color: #7cab1d;
+  background-image: none;
+  font-weight: normal;
+  box-shadow: none;
+  color: #ffffff;
+}
+nav .navbar .nav li.dropdown.open > .dropdown-toggle,
+nav .navbar .nav li.dropdown.active > .dropdown-toggle,
+nav .navbar .nav li.dropdown.open.active > .dropdown-toggle {
+  text-decoration: underline;
+  background-color: #7cab1d;
+  font-weight: normal;
+  box-shadow: none;
+  color: #ffffff;
+}
+nav .nav-list form {
+  margin: 0px;
+  padding: 0px;
+  display: inline;
+}
+nav .nav-list form .btn {
+  margin: 0px;
+  padding: 0px;
+}
+.dropdown-menu form {
+  margin: 0px;
+  padding: 0px;
+}
+.pagination ul > li > a,
+.pagination ul > li > span {
+  padding: 0 9px;
+}
+/* ============ END BOOTSTRAP OVERRIDES */
+.CodeMirror-scroll {
+  padding: 4px;
+  margin-bottom: 9px;
+  font-size: 13px;
+  line-height: 18px;
+  color: #555555;
+  background-color: white;
+  border: 1px solid #cccccc;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+.CodeMirror-scroll {
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+  -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+  -ms-transition: border linear 0.2s, box-shadow linear 0.2s;
+  -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+  transition: border linear 0.2s, box-shadow linear 0.2s;
+}
+.field_with_errors .CodeMirror-scroll {
+  border-color: #b94a48;
+}
+.CodeMirror-focused {
+  border-color: rgba(82, 168, 236, 0.8);
+  outline: 0;
+  outline: thin dotted \9;
+  /* IE6-9 */
+
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+}
+.content-spacer {
+  margin-top: 36px;
+}
+.dashboard-wow {
+  font-size: 3.5em;
+}
+.well a {
+  color: #000000;
+}
+div.dataTables_length {
+  padding-left: 34px;
+  padding-top: 8px;
+}
+div.dataTables_length label {
+  float: left;
+  text-align: left;
+}
+div.dataTables_length select {
+  width: 75px;
+}
+div.dataTables_filter label {
+  float: right;
+  font-weight: bold;
+}
+div.dataTables_filter label input {
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+}
+div.dataTables_wrapper {
+  margin: 0px;
+  padding: 0px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+div.dataTables_length {
+  margin: 0px;
+  padding: 0px;
+  float: left;
+}
+div.dataTables_paginate {
+  margin: 0px;
+  padding: 0px;
+  float: right;
+}
+div.dataTables_info {
+  margin: 0px;
+  padding: 0px;
+  font-weight: bold;
+  float: left;
+}
+div.dataTables_filter {
+  margin: 0px;
+  padding: 0px;
+  float: right;
+}
+.row-sortable-top {
+  margin-bottom: 24px;
+}
+.row-sortable-bottom {
+  margin-top: 24px;
+}
+table.table thead .sorting,
+table.table thead .sorting_asc,
+table.table thead .sorting_desc,
+table.table thead .sorting_asc_disabled,
+table.table thead .sorting_desc_disabled {
+  cursor: pointer;
+  *cursor: hand;
+}
+table.dataTable th:active {
+  outline: none;
+}
+table.table-borderless th {
+  border: 0px;
+}
+table.table-borderless td {
+  border: 0px;
+}
+.table th {
+  color: #555555;
+}
+.table th.sorting:hover {
+  text-decoration: underline;
+}
+.table th.sorting_asc:hover {
+  text-decoration: underline;
+}
+.table th.sorting_desc:hover {
+  text-decoration: underline;
+}
+.table-modifiers {
+  margin-top: 48px;
+}
+ul.clean {
+  list-style: none;
+}
+header {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  background-color: #ffffff;
+  color: #7cab1d;
+}
+header img {
+  float: left;
+  padding-bottom: 0px;
+  padding-left: 12px;
+  padding-right: 36px;
+}
+header h1 {
+  margin: 0px;
+  padding: 0px;
+  float: left;
+  font-size: 2.5em;
+  font-weight: bold;
+  padding-top: 18px;
+  padding-left: 10px;
+}
+header h2 {
+  margin: 0px;
+  padding: 0px;
+  float: right;
+  color: #628615;
+  font-size: 1.4em;
+  font-weight: normal;
+  padding-top: 15px;
+  padding-right: 12px;
+}
+nav {
+  margin-bottom: 12px;
+  background-color: #ffffff;
+}
+section h2 {
+  color: #555555;
+}
+footer {
+  margin: 0px;
+  padding: 0px;
+  padding-top: 48px;
+  padding-bottom: 12px;
+}
+footer .container {
+  border-top: 1px solid #e1e1e1;
+  word-wrap: break-word;
+  padding: 6px;
+  font-size: 0.9em;
+  color: #bbbbbb;
+}
+footer .container a {
+  color: #bbbbbb;
+}
+</style><style type="text/css" media="screen, projection" id="less:css-application">.statistic {
+  text-align: center;
+}
+.statistic .lead {
+  font-size: 4em;
+  font-weight: bold;
+  margin-top: 12px;
+}
+.administering {
+  position: relative;
+}
+.administering .view-all {
+  text-align: right;
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+}
+.administering a {
+  color: #0088cc;
+}
+.administering a.btn {
+  color: #fff;
+}
+form.finalize label {
+  font-size: 20px;
+  margin-top: 6px;
+}
+form.finalize input[type="text"],
+input[type="password"] {
+  font-size: 36px;
+  height: 46px;
+  line-height: 46px;
+}
+form.myaccount label {
+  font-size: 20px;
+  margin-top: 6px;
+}
+form.myaccount input[type="text"],
+input[type="password"] {
+  font-size: 36px;
+  height: 46px;
+  line-height: 46px;
+}
+form.form-login input[type="text"],
+input[type="password"] {
+  font-size: 36px;
+  height: 46px;
+  line-height: 46px;
+  width: 96%;
+}
+#loginform .well {
+  margin-top: 6px;
+}
+#loginform .well a {
+  color: #08c;
+}
+.help-block-pulse {
+  color: #289ABF;
+}
+.help-block-pulse a {
+  color: #289ABF;
+  text-decoration: underline;
+}
+</style>
+
+    
+    <meta name="layout" content="public">
+    
+  
+  <style type="text/css"></style></head>
+
+  <body>
+    
+    <header>      
+      <div class="container">  
+  <div class="row">
+    <div class="span12">
+      <img src="images/tuakiri.png" alt="Discovery Service" width="310" height="82">
+      <h1>Discovery Service</h1> 
+    </div>
+  </div>
+</div>
+
+    </header>
+
+    <nav>
+      <div class="container">
+        <div class="navbar">
+          <div class="navbar-inner">
+
+            <a class="btn btn-navbar btn-mini" data-toggle="collapse" data-target=".nav-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </a>
+
+            <ul class="nav">
+              <li>
+                <a href="/">Welcome</a>
+              </li>
+              <li><a style="color: #fff;" href="#" onClick="script: Zenbox.show(); return false;">Support</a></li>
+            </ul>
+
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <section>
+      <div class="container">
+        <div class="notifications top-right"></div>
+        
+
+    <div class="hero-unit">
+      <h2>Welcome to the Tuakiri Discovery Service</h2>
+      <p>The Discovery Service is the Gateway that lets Tuakiri users choose the home organisation they belong to, and then proceed to the log in page of their home organisation.
+      <p>If you have come here in order to access a service with Tuakiri login, please have a look at our <a href="http://tuakiri.ac.nz/confluence/display/Tuakiri/Service+Catalogue">Service Catalogue</a>, choose the service you want to access from the list, click "Open", and then log in with Tuakiri.
+      <p>If you have come here to reset your selection of Home Organisation within the Tuakiri Access Federation, please go to the <a href="/ds/reset.jsp">reset page</a>.
+      <p>More information about Tuakiri is available on our website, <a href="http://www.tuakiri.ac.nz/">www.tuakiri.ac.nz</a>.
+    </div>
+
+    
+
+  
+      </div>
+    </section>
+  
+    <footer>
+      <div class="container"> 
+        <div class="row">
+          <div class="span12">
+            
+
+<p>
+  Discovery Service <strong>version 1.1.2</strong>
+  <br>
+  Developed for the <a href="http://www.aaf.edu.au/">Australian Access Federation</a> by <a href="http://bradleybeddoes.com/">Bradley Beddoes</a>
+</p>
+
+          </div>
+        </div>
+      </div>
+    </footer>
+
+<script type="text/javascript">
+      $('.descriptive-text').equalizeCols();
+    </script>
+  
+<script type="text/javascript" src="//assets.zendesk.com/external/zenbox/v2.5/zenbox.js"></script>
+<style type="text/css" media="screen, projection">
+  @import url(//assets.zendesk.com/external/zenbox/v2.5/zenbox.css);
+</style>
+<script type="text/javascript">
+  if (typeof(Zenbox) !== "undefined") {
+    Zenbox.init({
+      dropboxID:   "20198172",
+      url:         "nesi.zendesk.com",
+      tabID:       "support",
+      hide_tab:    true
+    });
+  }
+</script>
+</body></html>
