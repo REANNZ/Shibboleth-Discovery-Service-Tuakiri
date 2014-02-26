@@ -46,6 +46,11 @@
      Use this if you are setting up a DS that would be primarily serving one
      federation but is also loading metadata for other federations.
 
+     useForwardedFor controls whether session logging would be looking
+     for an X-Forwarded-For header injected by a load balancer (and use
+     this instead of the actual client IP if the contents of this header
+     conforms to the syntatic format of an IP address.
+
      THIS SETTING IS SYSTEM WIDE ONLY.
 -->
 
@@ -56,7 +61,9 @@
             provideListOfList="false"
             warnOnBadBinding="false"
             showUnusableIdPs="false"
-            defaultFederation="FirstSite">
+            defaultFederation="FirstSite"
+            useForwardedFor="false"
+            >
             <SearchIgnore>
                 <IgnoreText>Institution</IgnoreText>
                 <IgnoreText>University</IgnoreText>
