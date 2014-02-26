@@ -59,6 +59,9 @@ public class HandlerConfig {
 
     /** The ID of the federation to pre-select in the List of Lists */
     private String defaultFederation;
+
+    /** Do we look for an X-Forwarded-For header injected by load balancers? */
+    private final boolean useForwardedFor;
  
     /** Build the 'default default' configuation. */ 
     public HandlerConfig() {
@@ -73,6 +76,7 @@ public class HandlerConfig {
         ignoredForMatch = new HashSet <String>(); 
         warnOnBadBinding = false;
         defaultFederation = null;
+        useForwardedFor = false;
     }
         
         
@@ -148,7 +152,7 @@ public class HandlerConfig {
         if (null != attribute && !attribute.equals("")) {
                 warnOnBadBinding = Boolean.valueOf(attribute).booleanValue();
         } else {
-            warnOnBadBinding = false;
+                warnOnBadBinding = defaultValue.warnOnBadBinding;
         }
 
         attribute = config.getAttribute("defaultFederation");
@@ -156,6 +160,13 @@ public class HandlerConfig {
                 defaultFederation = attribute;
         } else {
                 defaultFederation = defaultValue.defaultFederation;
+        }
+        
+        attribute = config.getAttribute("useForwardedFor");
+        if (null != attribute && !attribute.equals("")) {
+                useForwardedFor = Boolean.valueOf(attribute).booleanValue();
+        } else {
+                useForwardedFor = defaultValue.getUseForwardedFor();
         }
     }
     
@@ -236,6 +247,14 @@ public class HandlerConfig {
      */
     public String getDefaultFederation() {
             return defaultFederation;
+    }
+    
+    /**
+     * Do we look for an X-Forwarded-For header injected by load balancers?
+     * @return whether we look for the header.
+     */
+    public boolean getUseForwardedFor() {  
+        return useForwardedFor;  
     }
 
 }
