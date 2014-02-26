@@ -1025,6 +1025,11 @@ public class DiscoveryServiceHandler {
             // Format: date_created, idpname, spname, request_type, remoteHost, robot/user-agent
             String userAgent = req.getHeader("User-Agent");
             String requestAction = req.getParameter("action");
+            String remoteHost = ( config.getUseForwardedFor() ? req.getHeader("X-Forwarded-For") : null);
+            if (remoteHost == null || !remoteHost.matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}") ) {
+                remoteHost = req.getRemoteHost();
+            };
+
             LOG.info("Session established: " +
                 System.currentTimeMillis()/1000 /* current time since epoch */ + ";" +
                 URLEncoder.encode(site.getName(), "UTF-8") /* IdP entityID */ + ";" +
@@ -1032,7 +1037,7 @@ public class DiscoveryServiceHandler {
                 (twoZeroProtocol ? "DS" : "WAYF" ) + " " +
                     ( (requestAction != null) && requestAction.equals("selection") ?
                       "Request" : "Cookie") + ";" +
-                req.getRemoteHost() + ";" +
+                remoteHost + ";" +
                 ( userAgent == null ? "" : URLEncoder.encode(userAgent, "UTF-8")));
         } catch (UnsupportedEncodingException e) { LOG.error("Could not log session", e); };
 
