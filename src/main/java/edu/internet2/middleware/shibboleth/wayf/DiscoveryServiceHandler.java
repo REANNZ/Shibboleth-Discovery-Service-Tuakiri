@@ -145,12 +145,12 @@ public class DiscoveryServiceHandler {
     /**
      * The application version (as obtained from Maven properties)
      */
-    private static String dsVersion;
+    private String dsVersion;
 
     /**
      * The hostname of the local system (or, more precisely, the reverse lookup of the IP address that the hostname resolved to).
      */
-    private static String localHostName;
+    private String localHostName;
 
     /**
      * Mandatory Serialization constant.
@@ -1013,7 +1013,7 @@ public class DiscoveryServiceHandler {
      * @param site The Idp
      * @throws WayfException if bad things happen.
      */
-    public static void forwardRequest(HttpServletRequest req, HttpServletResponse res, IdPSite site)
+    private void forwardRequest(HttpServletRequest req, HttpServletResponse res, IdPSite site)
                     throws WayfException {
 
         String shire = getValue(req, SHIRE_PARAM_NAME);
