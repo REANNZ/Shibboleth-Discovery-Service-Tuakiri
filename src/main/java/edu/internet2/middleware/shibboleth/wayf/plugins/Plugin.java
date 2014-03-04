@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 
 import edu.internet2.middleware.shibboleth.wayf.IdPSite;
+import edu.internet2.middleware.shibboleth.wayf.DiscoveryServiceHandler;
 
 /**
  * 
@@ -81,6 +82,7 @@ public interface Plugin {
          * @param req - Describes the current request.  A Plugin might use it to find any appropriate cookies 
          * @param res - Describes the current response.  A Plugin might use it to redirect a the request. 
          * @param parameter Describes the metadata.
+         * @param discoveryServiceHandler The DiscoveryServiceHandler invoking this method
          * @param context Any processing context returned from a previous call.
          * @param validIdps The list of IdPs which is currently views as possibly matches for the pattern. 
          *                  The Key is the EntityId for the IdP and the value the object which describes 
@@ -106,6 +108,7 @@ public interface Plugin {
         PluginContext lookup(HttpServletRequest req, 
                                                  HttpServletResponse res, 
                                                  PluginMetadataParameter parameter, 
+                                                 DiscoveryServiceHandler discoveryServiceHandler,
                                                  Map<String, IdPSite> validIdps, 
                                                  PluginContext context, 
                                                  List<IdPSite> idpList) throws WayfRequestHandled;
@@ -120,6 +123,7 @@ public interface Plugin {
          * @param req Describes the current request.  The Plugin could use it to find any appropriate cookies 
          * @param res Describes the result - this is needed if (for instance) a plung needs to change cookie values
          * @param parameter Describes the metadata
+         * @param discoveryServiceHandler The DiscoveryServiceHandler invoking this method
          * @param pattern The Search pattern provided
          * @param validIdps The list of IdPs which is currently views as possibly matches for the pattern.  
          *                  The Key is the Idp Name an the value the idp
@@ -136,6 +140,7 @@ public interface Plugin {
         PluginContext search(HttpServletRequest req, 
                                         HttpServletResponse res, 
                                         PluginMetadataParameter parameter, 
+                                        DiscoveryServiceHandler discoveryServiceHandler,
                                         String pattern, 
                                         Map<String, IdPSite> validIdps, 
                                         PluginContext context, 
@@ -149,11 +154,13 @@ public interface Plugin {
          * @param req Describes the current request. 
          * @param res Describes the current response
          * @param parameter  Describes the metadata
+         * @param discoveryServiceHandler The DiscoveryServiceHandler invoking this method
          * @throws WayfRequestHandled if the plugin has handled the request (for instance it has
          * issues a redirect)
          */
         void selected(HttpServletRequest req, 
                       HttpServletResponse res, 
                       PluginMetadataParameter parameter, 
+                      DiscoveryServiceHandler discoveryServiceHandler,
                       String idP) throws WayfRequestHandled;
 }
