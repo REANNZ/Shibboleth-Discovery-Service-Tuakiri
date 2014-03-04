@@ -427,7 +427,7 @@ public class DiscoveryServiceHandler {
         for (Plugin plugin:plugins) {
             for (IdPSiteSet idPSiteSet: siteSets) {
                 PluginMetadataParameter param = idPSiteSet.paramFor(plugin);
-                plugin.selected(req, res, param, idpName);
+                plugin.selected(req, res, param, this, idpName);
                 if (site == null && idPSiteSet.containsIdP(idpName)) {
                     site = idPSiteSet.getSite(idpName);
                 }
@@ -791,6 +791,7 @@ public class DiscoveryServiceHandler {
                             ctx[i] = plugin.lookup(req, 
                                                    res, 
                                                    metadataProvider.paramFor(plugin), 
+                                                   this,
                                                    theseSites, 
                                                    ctx[i], 
                                                    hintList);
@@ -798,6 +799,7 @@ public class DiscoveryServiceHandler {
                             ctx[i] = plugin.search(req, 
                                                    res, 
                                                    metadataProvider.paramFor(plugin), 
+                                                   this,
                                                    searchName, 
                                                    theseSites, 
                                                    ctx[i], 
@@ -1013,7 +1015,7 @@ public class DiscoveryServiceHandler {
      * @param site The Idp
      * @throws WayfException if bad things happen.
      */
-    private void forwardRequest(HttpServletRequest req, HttpServletResponse res, IdPSite site)
+    public void forwardRequest(HttpServletRequest req, HttpServletResponse res, IdPSite site)
                     throws WayfException {
 
         String shire = getValue(req, SHIRE_PARAM_NAME);
