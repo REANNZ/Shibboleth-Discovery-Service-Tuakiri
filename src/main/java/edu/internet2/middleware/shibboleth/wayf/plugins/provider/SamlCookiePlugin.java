@@ -170,6 +170,7 @@ public class SamlCookiePlugin implements Plugin {
      * @param req - Describes the current request.  Used to find any appropriate cookies 
      * @param res - Describes the current response.  Used to redirect the request. 
      * @param parameter - Describes the metadata.
+     * @param discoveryServiceHandler The DiscoveryServiceHandler invoking this method
      * @param context - Any processing context returned from a previous call. We set this on first call and
      *                  use non null to indicate that we don't go there again.
      * @param validIdps The list of IdPs which is currently views as possibly matches for the pattern. 
@@ -185,6 +186,7 @@ public class SamlCookiePlugin implements Plugin {
     public PluginContext lookup(HttpServletRequest req,
                                 HttpServletResponse res,  
                                 PluginMetadataParameter parameter, 
+                                DiscoveryServiceHandler discoveryServiceHandler,
                                 Map<String, IdPSite> validIdps,
                                 PluginContext context,
                                 List <IdPSite> idpList) throws WayfRequestHandled {
@@ -216,7 +218,7 @@ public class SamlCookiePlugin implements Plugin {
             if (idp != null) {
                 if (alwaysFollow || doRedirect) {
                     try {
-                        DiscoveryServiceHandler.forwardRequest(req, res, idp);
+                        discoveryServiceHandler.forwardRequest(req, res, idp);
                     } catch (WayfException e) {
                         // Do nothing we are going to throw anyway
                         // Nope: we need to report up that there was an issue
@@ -269,6 +271,7 @@ public class SamlCookiePlugin implements Plugin {
      * @param req Describes the current request. 
      * @param res Describes the current response.
      * @param parameter Describes the metadata.
+     * @param discoveryServiceHandler The DiscoveryServiceHandler invoking this method
      * @param pattern What we are searchign for. 
      * @param validIdps The list of IdPs which is currently views as possibly matches for the pattern. 
      *                  The Key is the EntityId for the IdP and the value the object which describes 
@@ -285,6 +288,7 @@ public class SamlCookiePlugin implements Plugin {
     public PluginContext search(HttpServletRequest req,
                                 HttpServletResponse res, 
                                 PluginMetadataParameter parameter, 
+                                DiscoveryServiceHandler discoveryServiceHandler,
                                 String pattern,
                                 Map<String, IdPSite> validIdps,
                                 PluginContext context,
@@ -293,7 +297,7 @@ public class SamlCookiePlugin implements Plugin {
         //
         // Don't distinguish between lookup and search
         //
-        return lookup(req, res, parameter, validIdps, context, idpList);
+        return lookup(req, res, parameter, discoveryServiceHandler, validIdps, context, idpList);
     }
 
     /**
@@ -306,11 +310,14 @@ public class SamlCookiePlugin implements Plugin {
      * @param req Describes the current request. 
      * @param res Describes the current response.
      * @param parameter Describes the metadata.
+     * @param discoveryServiceHandler The DiscoveryServiceHandler invoking this method
      * @param idP Describes the idp.
      * 
      */
     public void selected(HttpServletRequest req, HttpServletResponse res,
-                         PluginMetadataParameter parameter, String idP) {
+                         PluginMetadataParameter parameter, 
+                         DiscoveryServiceHandler discoveryServiceHandler,
+                         String idP) {
             
         SamlIdPCookie cookie = getIdPCookie(req, res, cacheDomain);
         String param = req.getParameter(PARAMETER_NAME);
