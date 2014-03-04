@@ -46,6 +46,8 @@
         <xs:attribute name="cacheDomain" type="xs:string" use="optional"/>
         <xs:attribute name="cacheExpiration" type="xs:string" use="optional" />
         <xs:attribute name="warnOnBadBinding" type="xs:boolean" use="optional" />
+        <xs:attribute name="defaultFederation" type="xs:string" use="optional" />
+        <xs:attribute name="useForwardedFor" type="xs:boolean" use="optional" />
     </xs:complexType>
 
     <xs:element name="WayfConfig" >
@@ -64,6 +66,9 @@
                         <xs:attribute name="backingFile" type="xs:string" use="required" />);
         				<xs:attribute name="timeout" type="xs:integer" use="optional" />
                         <xs:attribute name="identifier" type="xs:string" use="required" />
+                        <xs:attribute name="minRefreshDelay" type="xs:string" use="optional" />
+                        <xs:attribute name="maxRefreshDelay" type="xs:string" use="optional" />
+                        <xs:attribute name="refreshDelayFactor" type="xs:float" use="optional" />
                         <xs:attribute name="uri" type="xs:string" use="required" />
                         <xs:anyAttribute namespace="##other" processContents="lax" />
                         <xs:element name="Plugin"  minOccurs="0" maxOccurs="unbounded">
