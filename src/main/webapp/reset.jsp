@@ -21,7 +21,7 @@
 <div id="reset_background_c">
 
     <div class="head">
-        <div class="logo"><img src="images/tuakiri.png" alt="Tuakiri New Zealand Federation" /></div>
+        <div class="logo"><img src="/static/images/tuakiri.png" alt="Tuakiri New Zealand Federation" /></div>
         <div class="NZAF_title"><h1>New Zealand Access Federation</h1></div>
 
 <!-- Tuakiri links -->
