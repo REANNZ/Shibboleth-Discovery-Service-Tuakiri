@@ -50,12 +50,17 @@
                 <mkdir dir="${ds.home}/logs" />
                 <mkdir dir="${ds.home}/metadata" />
                 <mkdir dir="${ds.home}/war" />
+                <mkdir dir="${ds.home}/html" />
 
                 <copy todir="${ds.home}/conf" preservelastmodified="true" overwrite="true">
                     <fileset dir="${resources.dir}" includes="wayfconfig.xml,logging.xml" />
                     <filterset begintoken="$" endtoken="$">
                         <filter token="DS_HOME" value="${ds.home}" />
                     </filterset>
+                </copy>
+
+                <copy todir="${ds.home}/html" preservelastmodified="true" overwrite="true">
+                    <fileset dir="${resources.dir}/html" />
                 </copy>
             </then>
         </if>
