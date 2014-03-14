@@ -142,7 +142,7 @@
 <head>
     <link rel="stylesheet" title="normal" type="text/css" href="wayf.css" /> 
     <title>Select your Home Organisation</title>
-    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="shortcut icon" href="/static/images/favicon.ico">
 </head>
 
 <body>
@@ -154,7 +154,7 @@
 <div id="background_c">
 
     <div class="head">
-        <div class="logo"><img src="images/tuakiri.png" alt="Tuakiri New Zealand Federation" /></div>
+        <div class="logo"><img src="/static/images/tuakiri.png" alt="Tuakiri New Zealand Federation" /></div>
 
 <!-- Tuakiri links -->
         <ul class="ds_links">

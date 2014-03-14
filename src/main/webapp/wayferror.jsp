@@ -25,7 +25,7 @@
 
 <div class="error_head">
 <!-- <img src="images/logo.jpg" alt="Shibboleth" /> -->
-<div class="logo"><img src="images/tuakiri.png" alt="Tuakiri" /></div>
+<div class="logo"><img src="/static/images/tuakiri.png" alt="Tuakiri" /></div>
 <div class="NZAF_title"><h1>New Zealand Access Federation</h1></div>
 <ul class="ds_links">
 	<li><a target="_blank" href="https://www.tuakiri.ac.nz">Home</a></li>
