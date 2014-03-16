@@ -50,17 +50,12 @@
                 <mkdir dir="${ds.home}/logs" />
                 <mkdir dir="${ds.home}/metadata" />
                 <mkdir dir="${ds.home}/war" />
-                <mkdir dir="${ds.home}/html" />
 
                 <copy todir="${ds.home}/conf" preservelastmodified="true" overwrite="true">
                     <fileset dir="${resources.dir}" includes="wayfconfig.xml,logging.xml" />
                     <filterset begintoken="$" endtoken="$">
                         <filter token="DS_HOME" value="${ds.home}" />
                     </filterset>
-                </copy>
-
-                <copy todir="${ds.home}/html" preservelastmodified="true" overwrite="true">
-                    <fileset dir="${resources.dir}/html" />
                 </copy>
             </then>
         </if>
@@ -72,6 +67,31 @@
             </filterset>
         </copy>
 
+        <if>
+            <available file="${ds.home.path}/html" property="ds.html.exists"/>
+            <then>
+                <input message="The directory '${ds.home.path}/html' already exists.  Would you like to overwrite the existing static html files?"
+                       addproperty="install.html"
+                       validargs="yes,no"
+                       defaultvalue="no" />
+            </then>
+            <else>
+                <var name="install.html" value="yes"/>
+            </else>
+        </if>
+
+        <if>
+            <equals arg1="${install.html}" arg2="yes" />
+            <then>
+                <mkdir dir="${ds.home}/html" />
+
+                <copy todir="${ds.home}/html" preservelastmodified="true" overwrite="true">
+                    <fileset dir="${resources.dir}/html" />
+                </copy>
+            </then>
+        </if>
+
+        <!-- create - always - the web.xml -->
         <!-- build the war file -->
         <war warfile="${ds.home}/war/${war.name}.war" webxml="${installer.dir}/web.xml">
             <lib dir="${basedir}/lib" />
