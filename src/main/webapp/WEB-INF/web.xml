@@ -6,6 +6,11 @@
 
 <web-app>
 
+	<context-param>
+		<param-name>StatusControlFile</param-name>
+		<param-value>$DS_HOME$/conf/disable_server</param-value>
+	</context-param>
+
 	<servlet>
 		<servlet-name>WAYF</servlet-name>
 		<display-name>Shibboleth WAYF Service</display-name>
