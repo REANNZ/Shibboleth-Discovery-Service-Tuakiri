@@ -262,6 +262,7 @@ Recently used organizations:
  
    Add the "instant search" dialogue.
 
+-->
 </logic:present>
 
     <div class="list">
@@ -297,7 +298,11 @@ Recently used organizations:
 
 <logic:present name="showComments" scope="Request">
 
+<!-- PROGRAMMING NOTE
+
 Provide a static drop down or a dynamically republished one. - you may wish to remove this code
+
+-->
 
 </logic:present>
 
