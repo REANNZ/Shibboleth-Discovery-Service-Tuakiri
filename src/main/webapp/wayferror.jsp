@@ -4,9 +4,13 @@
 	"DTD/xhtml1-strict.dtd">
 	<%@ taglib uri="/WEB-INF/tlds/struts-logic.tld" prefix="logic" %>
 	<%@ taglib uri="/WEB-INF/tlds/struts-bean.tld" prefix="bean" %>
+	<%@ taglib uri="/WEB-INF/tlds/esapi.tld" prefix="esapi" %>
 	
-	<jsp:useBean id="requestURL" scope="request" class="java.lang.String"/>
-	<jsp:useBean id="errorText" scope="request" class="java.lang.String"/>
+
+<%
+Object requestURL = request.getAttribute("requestURL");
+Object errorText = request.getAttribute("errorText");
+%>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -42,9 +46,9 @@
 <p>Please email <a href="mailto:support@tuakiri.ac.nz">Tuakiri support</a> and include the following error message:</p>
 
 <logic:notEmpty name="requestURL">
-<p class="error">Discovery Service failure at (<bean:write name="requestURL" />)</p>
+<p class="error">Discovery Service failure at (<esapi:encodeForHTML><%=requestURL%></esapi:encodeForHTML>)</p>
 
-<p><bean:write name="errorText" filter="false" /></p>
+<p><esapi:encodeForHTML><%=errorText%></esapi:encodeForHTML></p>
 </logic:notEmpty>
 <logic:empty name="requestURL">
 <p class="error">The Discovery Service should not be called directly</p>
@@ -59,9 +63,9 @@
 
 <!-- display DS version -->
 <logic:present name="dsVersion" scope="request">
-<!-- DS version: <%= (String)request.getAttribute("dsVersion") %> -->
+<!-- DS version: <esapi:encodeForHTML><%= (String)request.getAttribute("dsVersion") %></esapi:encodeForHTML> -->
 </logic:present>
-<!-- Internal Hostname: <%= (String)request.getAttribute("internalHostname") %> -->
+<!-- Internal Hostname: <esapi:encodeForHTML><%= (String)request.getAttribute("internalHostname") %></esapi:encodeForHTML> -->
 
 </body>
 </html>

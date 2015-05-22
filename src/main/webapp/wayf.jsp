@@ -6,9 +6,23 @@
 
 <%@ taglib uri="/WEB-INF/tlds/struts-logic.tld" prefix="logic" %>
 <%@ taglib uri="/WEB-INF/tlds/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="/WEB-INF/tlds/esapi.tld" prefix="esapi" %>
 
 <%request.setCharacterEncoding("UTF-8");%>
 <%response.setCharacterEncoding("UTF-8");%>
+
+<%
+Object requestURL = request.getAttribute("requestURL");
+
+Object shire = request.getAttribute("shire");
+Object target = request.getAttribute("target");
+Object providerId = request.getAttribute("providerId");
+Object time = request.getAttribute("time");
+
+Object entityID = request.getAttribute("entityID");
+Object returnX =  request.getAttribute("returnX");
+Object returnIDParam = request.getAttribute("returnIDParam");
+%>
 
 <logic:present name="showComments" scope="Request">
 
@@ -28,8 +42,6 @@
      the WAYF and error reporting -->
 
 </logic:present>
-
-    <jsp:useBean id="requestURL" scope="request" class="java.lang.String"/>
 
 <logic:present name="showComments" scope="Request">
 
@@ -173,10 +185,10 @@
 
 The service 
 <logic:present name="spServiceName" scope="request">
-   <b>'<%= (String)request.getAttribute("spServiceName") %>'</b>
+   <b>'<esapi:encodeForHTML><%= (String)request.getAttribute("spServiceName") %></esapi:encodeForHTML>'</b>
 </logic:present>
 <logic:present name="spHostname" scope="request">
-   at host <b>'<%= (String)request.getAttribute("spHostname") %>'</b>
+   at host <b>'<esapi:encodeForHTML><%= (String)request.getAttribute("spHostname") %></esapi:encodeForHTML>'</b>
 </logic:present>
 you are trying to access requires that you authenticate with your home organisation.
 
@@ -199,37 +211,30 @@ you are trying to access requires that you authenticate with your home organisat
             <p  class="text">
               <logic:present name="entityID" scope="request">
 
-                <bean:define id="returnIDParam" name="returnIDParam"/>
-                <bean:define id="ei" name="entityID" />
-                <bean:define id="re" name="returnX"/>
-                 <a tabindex="10" href="<bean:write name="requestURL" />?entityID=<%= java.net.URLEncoder.encode(ei.toString(), "utf-8") %>&amp;return=<%= java.net.URLEncoder.encode(re.toString(), "utf-8") %>&amp;returnIDParam=<%= java.net.URLEncoder.encode( returnIDParam.toString(), "utf-8" ) %>&amp;cache=perm&amp;action=selection&amp;origin=<jsp:getProperty name="site" property="name" />" onClick="IdPForm = document.forms['recent-<jsp:getProperty name="site" property="name" />']; IdPForm.redirect.value = ( document.IdPList.redirect.checked ? 'redirect' : '' ); IdPForm.cache.value = document.IdPList.cache.value ; IdPForm.submit(); return false;">
-                    <jsp:getProperty name="site" property="displayName" />
+                 <a tabindex="10" href="<esapi:encodeForHTMLAttribute><%=requestURL%></esapi:encodeForHTMLAttribute>?entityID=<esapi:encodeForURL><%=entityID%></esapi:encodeForURL>&amp;return=return=<esapi:encodeForURL><%=returnX%></esapi:encodeForURL>&amp;returnIDParam=<esapi:encodeForURL><%=returnIDParam%></esapi:encodeForURL>&amp;cache=perm&amp;action=selection&amp;origin=<esapi:encodeForURL><jsp:getProperty name="site" property="name" /></esapi:encodeForURL>" onClick="IdPForm = document.forms['recent-<esapi:encodeForJavaScript><jsp:getProperty name="site" property="name" /></esapi:encodeForJavaScript>']; IdPForm.redirect.value = ( document.IdPList.redirect.checked ? 'redirect' : '' ); IdPForm.cache.value = document.IdPList.cache.value ; IdPForm.submit(); return false;">
+                    <esapi:encodeForHTML><jsp:getProperty name="site" property="displayName" /></esapi:encodeForHTML>
                 </a>
-                <form method="get" id="recent-<jsp:getProperty name="site" property="name" />" action="<bean:write name="requestURL" />" >
-                    <input type="hidden" name="entityID" value="<bean:write name="ei" />">
-                    <input type="hidden" name="return" value="<bean:write name="re" />">
-                    <input type="hidden" name="returnIDParam" value="<bean:write name="returnIDParam" />">
+                <form method="get" id="recent-<esapi:encodeForHTMLAttribute><jsp:getProperty name="site" property="name" /></esapi:encodeForHTMLAttribute>" action="<esapi:encodeForHTMLAttribute><%=requestURL%></esapi:encodeForHTMLAttribute>" >
+                    <input type="hidden" name="entityID" value="<esapi:encodeForHTMLAttribute><%=entityID%></esapi:encodeForHTMLAttribute>">
+                    <input type="hidden" name="return" value="<esapi:encodeForHTMLAttribute><%=returnX%></esapi:encodeForHTMLAttribute>">
+                    <input type="hidden" name="returnIDParam" value="<esapi:encodeForHTMLAttribute><%=returnIDParam%></esapi:encodeForHTMLAttribute>">
                     <input type="hidden" name="cache" value="perm">
                     <input type="hidden" name="action" value="selection">
-                    <input type="hidden" name="origin" value="<jsp:getProperty name="site" property="name" />">
+                    <input type="hidden" name="origin" value="<esapi:encodeForHTMLAttribute><jsp:getProperty name="site" property="name" /></esapi:encodeForHTMLAttribute>">
                     <input type="hidden" name="redirect" value=""> <!-- value="redirect" -->
                 </form>
               </logic:present>
               <logic:notPresent name="entityID" scope="request">
-                <bean:define id="targ" name="target" />
-                <bean:define id="shire" name="shire" />
-                <bean:define id="pid" name="providerId" />
-                <a tabindex="10" href="<bean:write name="requestURL" />?target=<%= java.net.URLEncoder.encode(targ.toString(),"utf-8") %>&amp;shire=<%= java.net.URLEncoder.encode(shire.toString(),"utf-8") %>&amp;providerId=<%= java.net.URLEncoder.encode(pid.toString(),"utf-8") %>&amp;time=<bean:write name="time" />&amp;cache=perm&amp;action=selection&amp;origin=<jsp:getProperty name="site" property="name" />" onClick="IdPForm = document.forms['recent-<jsp:getProperty name="site" property="name" />']; IdPForm.redirect.value = ( document.IdPList.redirect.checked ? 'redirect' : '' ); IdPForm.cache.value = document.IdPList.cache.value ; IdPForm.submit(); return false;">
-                    <jsp:getProperty name="site"
-                    property="displayName" />
+                <a tabindex="10" href="<esapi:encodeForHTMLAttribute><%=requestURL%></esapi:encodeForHTMLAttribute>?target=<esapi:encodeForURL><%=target%></esapi:encodeForURL>&amp;shire=<esapi:encodeForURL><%=shire%></esapi:encodeForURL>&amp;providerId=<esapi:encodeForURL><%=providerId%></esapi:encodeForURL>&amp;time=<esapi:encodeForURL><%=time%></esapi:encodeForURL>&amp;cache=perm&amp;action=selection&amp;origin=<esapi:encodeForURL><jsp:getProperty name="site" property="name" /></esapi:encodeForURL>" onClick="IdPForm = document.forms['recent-<esapi:encodeForJavaScript><jsp:getProperty name="site" property="name" /></esapi:encodeForJavaScript>']; IdPForm.redirect.value = ( document.IdPList.redirect.checked ? 'redirect' : '' ); IdPForm.cache.value = document.IdPList.cache.value ; IdPForm.submit(); return false;">
+                    <esapi:encodeForHTML><jsp:getProperty name="site" property="displayName" /></esapi:encodeForHTML>
                 </a>
-                <form method="get" id="recent-<jsp:getProperty name="site" property="name" />" action="<bean:write name="requestURL" />" >
-                    <input type="hidden" name="shire" value="<bean:write name="shire" />">
-                    <input type="hidden" name="providerId" value="<bean:write name="pid" />">
-                    <input type="hidden" name="time" value="<bean:write name="time" />">
+                <form method="get" id="recent-<esapi:encodeForHTMLAttribute><jsp:getProperty name="site" property="name" /></esapi:encodeForHTMLAttribute>" action="<esapi:encodeForHTMLAttribute><%=requestURL%></esapi:encodeForHTMLAttribute>" >
+                    <input type="hidden" name="shire" value="<esapi:encodeForHTMLAttribute><%=shire%></esapi:encodeForHTMLAttribute>">
+                    <input type="hidden" name="providerId" value="<esapi:encodeForHTMLAttribute><%=providerId%></esapi:encodeForHTMLAttribute>">
+                    <input type="hidden" name="time" value="<esapi:encodeForHTMLAttribute><%=time%></esapi:encodeForHTMLAttribute>">
                     <input type="hidden" name="cache" value="perm">
                     <input type="hidden" name="action" value="selection">
-                    <input type="hidden" name="origin" value="<jsp:getProperty name="site" property="name" />">
+                    <input type="hidden" name="origin" value="<esapi:encodeForHTMLAttribute><jsp:getProperty name="site" property="name" /></esapi:encodeForHTMLAttribute>">
                     <input type="hidden" name="redirect" value=""> <!-- value="redirect" -->
                 </form>
               </logic:notPresent>
@@ -248,17 +253,17 @@ you are trying to access requires that you authenticate with your home organisat
         <form method="get" action="ClearCache.wayf" >
           <div>
           <logic:notPresent name="entityID" scope="request">
-            <input type="hidden" name="shire" value="<bean:write name="shire" />" />
-            <input type="hidden" name="target" value="<bean:write name="target" />" />
-            <input type="hidden" name="providerId" value="<bean:write name="providerId" />" />
+            <input type="hidden" name="shire" value="<esapi:encodeForHTMLAttribute><%=shire%></esapi:encodeForHTMLAttribute>" />
+            <input type="hidden" name="target" value="<esapi:encodeForHTMLAttribute><%=target%></esapi:encodeForHTMLAttribute>" />
+            <input type="hidden" name="providerId" value="<esapi:encodeForHTMLAttribute><%=providerId%></esapi:encodeForHTMLAttribute>" />
             <logic:present name="time" scope="request">
-               <input type="hidden" name="time" value="<bean:write name="time" />" />
+               <input type="hidden" name="time" value="<esapi:encodeForHTMLAttribute><%=time%></esapi:encodeForHTMLAttribute>" />
             </logic:present>
           </logic:notPresent>
           <logic:present name="entityID" scope="request">
-            <input type="hidden" name="entityID" value="<bean:write name="entityID" />" />
-            <input type="hidden" name="returnX" value="<bean:write name="returnX" />" />
-            <input type="hidden" name="returnIDParam" value="<bean:write name="returnIDParam" />" />
+            <input type="hidden" name="entityID" value="<esapi:encodeForHTMLAttribute><%=entityID%></esapi:encodeForHTMLAttribute>" />
+            <input type="hidden" name="returnX" value="<esapi:encodeForHTMLAttribute><%=returnX%></esapi:encodeForHTMLAttribute>" />
+            <input type="hidden" name="returnIDParam" value="<esapi:encodeForHTMLAttribute><%=returnIDParam%></esapi:encodeForHTMLAttribute>" />
           </logic:present>
           <input id="clear" tabindex="20" type="submit" value="Clear" />
           </div>
@@ -272,6 +277,7 @@ you are trying to access requires that you authenticate with your home organisat
  
    Add the "instant search" dialogue.
 
+-->
 </logic:present>
 
     <div class="list">
@@ -282,17 +288,17 @@ you are trying to access requires that you authenticate with your home organisat
               <form autocomplete="OFF" action="">
                 <div>
                   <logic:notPresent name="entityID" scope="request">
-                    <input type="hidden" name="shire" value="<bean:write name="shire" />" />
-                    <input type="hidden" name="target" value="<bean:write name="target" />" />
-                    <input type="hidden" name="providerId" value="<bean:write name="providerId" />" />
+                    <input type="hidden" name="shire" value="<esapi:encodeForHTMLAttribute><%=shire%></esapi:encodeForHTMLAttribute>" />
+                    <input type="hidden" name="target" value="<esapi:encodeForHTMLAttribute><%=target%></esapi:encodeForHTMLAttribute>" />
+                    <input type="hidden" name="providerId" value="<esapi:encodeForHTMLAttribute><%=providerId%></esapi:encodeForHTMLAttribute>" />
                     <logic:present name="time" scope="request">
-                       <input type="hidden" name="time" value="<bean:write name="time" />" />
+                       <input type="hidden" name="time" value="<esapi:encodeForHTMLAttribute><%=time%></esapi:encodeForHTMLAttribute>" />
                     </logic:present>
                   </logic:notPresent>
                   <logic:present name="entityID" scope="request">
-                    <input type="hidden" name="entityID" value="<bean:write name="entityID" />" />
-                    <input type="hidden" name="returnX" value="<bean:write name="returnX" />" />
-                    <input type="hidden" name="returnIDParam" value="<bean:write name="returnIDParam" />" />
+                    <input type="hidden" name="entityID" value="<esapi:encodeForHTMLAttribute><%=entityID%></esapi:encodeForHTMLAttribute>" />
+                    <input type="hidden" name="returnX" value="<esapi:encodeForHTMLAttribute><%=returnX%></esapi:encodeForHTMLAttribute>" />
+                    <input type="hidden" name="returnIDParam" value="<esapi:encodeForHTMLAttribute><%=returnIDParam%></esapi:encodeForHTMLAttribute>" />
                   </logic:present>
                   <input type="hidden" id="enterOrigin" name="origin" value="unspec" />
                   <input type="hidden" id="enterType"   name="action" value="search" />
@@ -307,7 +313,11 @@ you are trying to access requires that you authenticate with your home organisat
 
 <logic:present name="showComments" scope="Request">
 
+<!-- PROGRAMMING NOTE
+
 Provide a static drop down or a dynamically republished one. - you may wish to remove this code
+
+-->
 
 </logic:present>
 
@@ -320,26 +330,26 @@ Select from the list:
         <logic:present name="sites" scope="request">
         <logic:notPresent name="siteLists" scope="request">
 
-            <form method="get" name="IdPList" action="<bean:write name="requestURL" />">
+            <form method="get" name="IdPList" action="<esapi:encodeForHTMLAttribute><%=requestURL%></esapi:encodeForHTMLAttribute>">
               <div>
                 <logic:notPresent name="entityID" scope="request">
-                    <input type="hidden" name="shire" value="<bean:write name="shire" />" />
-                    <input type="hidden" name="target" value="<bean:write name="target" />" />
-                    <input type="hidden" name="providerId" value="<bean:write name="providerId" />" />
+                    <input type="hidden" name="shire" value="<esapi:encodeForHTMLAttribute><%=shire%></esapi:encodeForHTMLAttribute>" />
+                    <input type="hidden" name="target" value="<esapi:encodeForHTMLAttribute><%=target%></esapi:encodeForHTMLAttribute>" />
+                    <input type="hidden" name="providerId" value="<esapi:encodeForHTMLAttribute><%=providerId%></esapi:encodeForHTMLAttribute>" />
                     <logic:present name="time" scope="request">
-                         <input type="hidden" name="time" value="<bean:write name="time" />" />
+                         <input type="hidden" name="time" value="<esapi:encodeForHTMLAttribute><%=time%></esapi:encodeForHTMLAttribute>" />
                     </logic:present>
                 </logic:notPresent>
                 <logic:present name="entityID" scope="request">
-                    <input type="hidden" name="entityID" value="<bean:write name="entityID" />" />
-                    <input type="hidden" name="returnX" value="<bean:write name="returnX" />" />
-                    <input type="hidden" name="returnIDParam" value="<bean:write name="returnIDParam" />" />
+                    <input type="hidden" name="entityID" value="<esapi:encodeForHTMLAttribute><%=entityID%></esapi:encodeForHTMLAttribute>" />
+                    <input type="hidden" name="returnX" value="<esapi:encodeForHTMLAttribute><%=returnX%></esapi:encodeForHTMLAttribute>" />
+                    <input type="hidden" name="returnIDParam" value="<esapi:encodeForHTMLAttribute><%=returnIDParam%></esapi:encodeForHTMLAttribute>" />
                  </logic:present>
                  <input type="hidden" name="action" value="selection" />
                  <select name="origin" id="hackForie6" tabindex="40">      
                      <logic:iterate id="site" name="sites">
-                         <option value="<jsp:getProperty name="site" property="name" />">
-                             <jsp:getProperty name="site" property="displayName" />
+                         <option value="<esapi:encodeForHTMLAttribute><jsp:getProperty name="site" property="name"/></esapi:encodeForHTMLAttribute>">
+                             <esapi:encodeForHTML><jsp:getProperty name="site" property="displayName"/></esapi:encodeForHTML>
                          </option>
                      </logic:iterate>
                  </select>
@@ -377,20 +387,20 @@ Select from the list:
 </logic:present>
 
         <logic:present name="siteLists" scope="request">
-          <form method="get" name="IdPList" action="<bean:write name="requestURL" />">
+          <form method="get" name="IdPList" action="<esapi:encodeForHTMLAttribute><%=requestURL%></esapi:encodeForHTMLAttribute>">
             <div>
              <logic:notPresent name="entityID" scope="request">
-                 <input type="hidden" name="shire" value="<bean:write name="shire" />" />
-                 <input type="hidden" name="target" value="<bean:write name="target" />" />
-                 <input type="hidden" name="providerId" value="<bean:write name="providerId" />" />
+                 <input type="hidden" name="shire" value="<esapi:encodeForHTMLAttribute><%=shire%></esapi:encodeForHTMLAttribute>" />
+                 <input type="hidden" name="target" value="<esapi:encodeForHTMLAttribute><%=target%></esapi:encodeForHTMLAttribute>" />
+                 <input type="hidden" name="providerId" value="<esapi:encodeForHTMLAttribute><%=providerId%></esapi:encodeForHTMLAttribute>" />
                  <logic:present name="time" scope="request">
-                    <input type="hidden" name="time" value="<bean:write name="time" />" />
+                    <input type="hidden" name="time" value="<esapi:encodeForHTMLAttribute><%=time%></esapi:encodeForHTMLAttribute>" />
                  </logic:present>
              </logic:notPresent>
              <logic:present name="entityID" scope="request">
-                 <input type="hidden" name="entityID" value="<bean:write name="entityID" />" />
-                 <input type="hidden" name="returnX" value="<bean:write name="returnX" />" />
-                 <input type="hidden" name="returnIDParam" value="<bean:write name="returnIDParam" />" />
+                 <input type="hidden" name="entityID" value="<esapi:encodeForHTMLAttribute><%=entityID%></esapi:encodeForHTMLAttribute>" />
+                 <input type="hidden" name="returnX" value="<esapi:encodeForHTMLAttribute><%=returnX%></esapi:encodeForHTMLAttribute>" />
+                 <input type="hidden" name="returnIDParam" value="<esapi:encodeForHTMLAttribute><%=returnIDParam%></esapi:encodeForHTMLAttribute>" />
               </logic:present>
              <table id="tab">
                <tr>
@@ -406,13 +416,13 @@ Select from the list:
 
                        <!-- Only One site so select it -->
 
-                       <option value="<jsp:getProperty name="siteset" property="name"/>" selected="selected">
-                         <jsp:getProperty name="siteset" property="name"/>
+                       <option value="<esapi:encodeForHTMLAttribute><jsp:getProperty name="siteset" property="name"/></esapi:encodeForHTMLAttribute>" selected="selected">
+                         <esapi:encodeForHTML><jsp:getProperty name="siteset" property="name"/></esapi:encodeForHTML>
                        </option>
                      </logic:present>
                      <logic:notPresent name="singleSiteList" scope="request">
-                       <option value="<jsp:getProperty name="siteset" property="name"/>">
-                         <jsp:getProperty name="siteset" property="name"/>
+                       <option value="<esapi:encodeForHTMLAttribute><jsp:getProperty name="siteset" property="name"/></esapi:encodeForHTMLAttribute>">
+                         <esapi:encodeForHTML><jsp:getProperty name="siteset" property="name"/></esapi:encodeForHTML>
                        </option>
                      </logic:notPresent>
                    </logic:iterate>
@@ -429,8 +439,8 @@ Select from the list:
                  <select name="origin" size="10" id="originIdp" tabindex="40"> 
                    <logic:present name="sites" scope="request">
                      <logic:iterate id="site" name="sites">
-                       <option value="<jsp:getProperty name="site" property="name" />">
-                         <jsp:getProperty name="site" property="displayName" />
+                       <option value="<esapi:encodeForHTMLAttribute><jsp:getProperty name="site" property="name" /></esapi:encodeForHTMLAttribute>">
+                         <esapi:encodeForHTML><jsp:getProperty name="site" property="displayName" /> </esapi:encodeForHTML>
                        </option>
                      </logic:iterate>
                    </logic:present>
@@ -438,8 +448,8 @@ Select from the list:
                    <logic:notPresent name="sites" scope="request">
                      <logic:iterate id="siteset" name="siteLists">
                        <logic:iterate id="site" name="siteset" property="sites">
-                         <option value="<jsp:getProperty name="site" property="name" />">
-                           <jsp:getProperty name="site" property="displayName" />
+                         <option value="<esapi:encodeForHTMLAttribute><jsp:getProperty name="site" property="name" /></esapi:encodeForHTMLAttribute>">
+                           <esapi:encodeForHTML><jsp:getProperty name="site" property="displayName" /> </esapi:encodeForHTML>
                          </option>
                        </logic:iterate>
                      </logic:iterate>        
@@ -476,22 +486,22 @@ Search by keyword:
 
             </h3>
 
-            <form method="get" action="<bean:write name="requestURL" />">
+            <form method="get" action="<esapi:encodeForHTMLAttribute><%=requestURL%></esapi:encodeForHTMLAttribute>">
               <div>
                 <p>
 
                 <logic:notPresent name="entityID" scope="request">
-                    <input type="hidden" name="shire" value="<bean:write name="shire" />" />
-                    <input type="hidden" name="target" value="<bean:write name="target" />" />
-                    <input type="hidden" name="providerId" value="<bean:write name="providerId" />" />
+                    <input type="hidden" name="shire" value="<esapi:encodeForHTMLAttribute><%=shire%></esapi:encodeForHTMLAttribute>" />
+                    <input type="hidden" name="target" value="<esapi:encodeForHTMLAttribute><%=target%></esapi:encodeForHTMLAttribute>" />
+                    <input type="hidden" name="providerId" value="<esapi:encodeForHTMLAttribute><%=providerId%></esapi:encodeForHTMLAttribute>" />
                     <logic:present name="time" scope="request">
-                         <input type="hidden" name="time" value="<bean:write name="time" />" />
+                         <input type="hidden" name="time" value="<esapi:encodeForHTMLAttribute><%=time%></esapi:encodeForHTMLAttribute>" />
                     </logic:present>
                 </logic:notPresent>
                 <logic:present name="entityID" scope="request">
-                    <input type="hidden" name="entityID" value="<bean:write name="entityID" />" />
-                    <input type="hidden" name="returnX" value="<bean:write name="returnX" />" />
-                    <input type="hidden" name="returnIDParam" value="<bean:write name="returnIDParam" />" />
+                    <input type="hidden" name="entityID" value="<esapi:encodeForHTMLAttribute><%=entityID%></esapi:encodeForHTMLAttribute>" />
+                    <input type="hidden" name="returnX" value="<esapi:encodeForHTMLAttribute><%=returnX%></esapi:encodeForHTMLAttribute>" />
+                    <input type="hidden" name="returnIDParam" value="<esapi:encodeForHTMLAttribute><%=returnIDParam%></esapi:encodeForHTMLAttribute>" />
                  </logic:present>
 
                     <input type="hidden" name="action" value="search" />
@@ -518,29 +528,29 @@ No provider was found that matches your search criteria, please try again.
 Search results:
 
                 </h3>
-                <form method="get" name="SearchResults" action="<bean:write name="requestURL" />">
+                <form method="get" name="SearchResults" action="<esapi:encodeForHTMLAttribute><%=requestURL%></esapi:encodeForHTMLAttribute>">
                   <div>
                     <ul>
                         <logic:iterate id="currResult" name="searchresults">
                             <li>
-                                <input type="radio" name="origin" tabindex="90" value="<jsp:getProperty name="currResult" property="name" />" />
-                                <jsp:getProperty name="currResult" property="displayName" />
+                                <input type="radio" name="origin" tabindex="90" value="<esapi:encodeForHTMLAttribute><jsp:getProperty name="currResult" property="name" /></esapi:encodeForHTMLAttribute>" />
+                                 <esapi:encodeForHTML><jsp:getProperty name="currResult" property="displayName" /></esapi:encodeForHTML>
                             </li>
                         </logic:iterate>
                     </ul>
                     <p>
                   <logic:notPresent name="entityID" scope="request">
-                      <input type="hidden" name="shire" value="<bean:write name="shire" />" />
-                      <input type="hidden" name="target" value="<bean:write name="target" />" />
-                      <input type="hidden" name="providerId" value="<bean:write name="providerId" />" />
+                      <input type="hidden" name="shire" value="<esapi:encodeForHTMLAttribute><%=shire%></esapi:encodeForHTMLAttribute>" />
+                      <input type="hidden" name="target" value="<esapi:encodeForHTMLAttribute><%=target%></esapi:encodeForHTMLAttribute>" />
+                      <input type="hidden" name="providerId" value="<esapi:encodeForHTMLAttribute><%=providerId%></esapi:encodeForHTMLAttribute>" />
                       <logic:present name="time" scope="request">
-                           <input type="hidden" name="time" value="<bean:write name="time" />" />
+                           <input type="hidden" name="time" value="<esapi:encodeForHTMLAttribute><%=time%></esapi:encodeForHTMLAttribute>" />
                       </logic:present>
                   </logic:notPresent>
                   <logic:present name="entityID" scope="request">
-                      <input type="hidden" name="entityID" value="<bean:write name="entityID" />" />
-                      <input type="hidden" name="returnX" value="<bean:write name="returnX" />" />
-                      <input type="hidden" name="returnIDParam" value="<bean:write name="returnIDParam" />" />
+                      <input type="hidden" name="entityID" value="<esapi:encodeForHTMLAttribute><%=entityID%></esapi:encodeForHTMLAttribute>" />
+                      <input type="hidden" name="returnX" value="<esapi:encodeForHTMLAttribute><%=returnX%></esapi:encodeForHTMLAttribute>" />
+                      <input type="hidden" name="returnIDParam" value="<esapi:encodeForHTMLAttribute><%=returnIDParam%></esapi:encodeForHTMLAttribute>" />
                    </logic:present>
                    <input type="hidden" name="action" value="selection" />
                    <input type="submit" value="Select" tabindex="100" />
@@ -593,12 +603,12 @@ function changedFed(X, Selected) {
   
   
     <logic:iterate id="siteset" name="siteLists">
-      if (Selected == "<jsp:getProperty name="siteset" property="name"/>") {
+      if (Selected == "<esapi:encodeForJavaScript><jsp:getProperty name="siteset" property="name"/></esapi:encodeForJavaScript>") {
         var opt;
         <logic:iterate id="site" name="siteset" property="sites">
-          opt = new Option ("<jsp:getProperty name="site" property="displayName" />");
+          opt = new Option ("<esapi:encodeForJavaScript><jsp:getProperty name="site" property="displayName" /></esapi:encodeForJavaScript>");
           X.options[X.length] = opt;
-          opt.value = "<jsp:getProperty name="site" property="name" />";
+          opt.value = "<esapi:encodeForJavaScript><jsp:getProperty name="site" property="name" /></esapi:encodeForJavaScript>";
         </logic:iterate>
       }
     </logic:iterate>
@@ -608,18 +618,18 @@ function changedFed(X, Selected) {
   
       <logic:present name="sites" scope="request">
           <logic:iterate id="site" name="sites">
-            opt = new Option("<jsp:getProperty name="site" property="displayName" />");
+            opt = new Option("<esapi:encodeForJavaScript><jsp:getProperty name="site" property="displayName" /></esapi:encodeForJavaScript>");
             X.options[X.length] = opt;
-            opt.value = "<jsp:getProperty name="site" property="name" />";
+            opt.value = "<esapi:encodeForJavaScript><jsp:getProperty name="site" property="name" /></esapi:encodeForJavaScript>";
           </logic:iterate>
       </logic:present>
   
       <logic:notPresent name="sites" scope="request">
           <logic:iterate id="siteset" name="siteLists">
             <logic:iterate id="site" name="siteset" property="sites">
-              opt = new Option ("<jsp:getProperty name="site" property="displayName" />");
+              opt = new Option ("<esapi:encodeForJavaScript><jsp:getProperty name="site" property="displayName" /></esapi:encodeForJavaScript>");
               X.options[X.length] = opt;
-              opt.value = "<jsp:getProperty name="site" property="name" />";
+              opt.value = "<esapi:encodeForJavaScript><jsp:getProperty name="site" property="name" /></esapi:encodeForJavaScript>";
             </logic:iterate>
           </logic:iterate>
       </logic:notPresent>
@@ -687,8 +697,7 @@ window.onload = function() {
 
 var theElements = [
   <logic:iterate id="site" name="sites">
-     ["<%= ((edu.internet2.middleware.shibboleth.wayf.IdPSite)site).getDisplayName().replace("\n","").toString() %>",
-      "<jsp:getProperty name="site" property="name" />"],
+ ["<esapi:encodeForJavaScript><jsp:getProperty name="site" property="displayName" /></esapi:encodeForJavaScript>","<esapi:encodeForJavaScript><jsp:getProperty name="site" property="name" /></esapi:encodeForJavaScript>"],
   </logic:iterate>
  ];
 
@@ -702,7 +711,7 @@ var theElements = [
    <script language="javascript" type="text/javascript">
 <!--
    function confirmRedirectCheckbox(checkbox) {
-     return !(checkbox && checkbox.checked) || confirm('Are you sure you want to be automatically redirected to the selected organisation in the future without being asked again?\n\nYou can reset your selection at <%= new java.net.URL(new java.net.URL(request.getRequestURL().toString()),"reset.jsp") %>\nOr by deleting your cookies for this host: <%= request.getServerName() %>');
+     return !(checkbox && checkbox.checked) || confirm('Are you sure you want to be automatically redirected to the selected organisation in the future without being asked again?\n\nYou can reset your selection at <esapi:encodeForJavaScript><%= new java.net.URL(new java.net.URL(request.getRequestURL().toString()),"reset.jsp") %></esapi:encodeForJavaScript>\nOr by deleting your cookies for this host: <esapi:encodeForJavaScript><%= request.getServerName() %></esapi:encodeForJavaScript>');
    };
 -->
 </script>
@@ -718,7 +727,7 @@ var theElements = [
    <script language="javascript" type="text/javascript">
    <!--
   /* set the default federation on load - when set */
-  setFederation(document.getElementById('FedSelect'),document.getElementById('originIdp'),'<%= (String)request.getAttribute("defaultFederation") %>');
+  setFederation(document.getElementById('FedSelect'),document.getElementById('originIdp'),'<esapi:encodeForJavaScript><%= (String)request.getAttribute("defaultFederation") %></esapi:encodeForJavaScript>');
    -->
    </script>
   </logic:present>
@@ -726,9 +735,9 @@ var theElements = [
 
 <!-- display DS version -->
 <logic:present name="dsVersion" scope="request">
-<!-- DS version: <%= (String)request.getAttribute("dsVersion") %> -->
+<!-- DS version: <esapi:encodeForHTML><%= (String)request.getAttribute("dsVersion") %></esapi:encodeForHTML> -->
 </logic:present>
-<!-- Internal Hostname: <%= (String)request.getAttribute("internalHostname") %> -->
+<!-- Internal Hostname: <esapi:encodeForHTML><%= (String)request.getAttribute("internalHostname") %></esapi:encodeForHTML> -->
 
 </body>
 </html>
