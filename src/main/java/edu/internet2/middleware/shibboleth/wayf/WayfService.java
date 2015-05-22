@@ -43,6 +43,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import org.owasp.esapi.ESAPI;
+
 import edu.internet2.middleware.shibboleth.common.ShibbolethConfigurationException;
 import edu.internet2.middleware.shibboleth.wayf.idpdisco.Description;
 import edu.internet2.middleware.shibboleth.wayf.idpdisco.DescriptionBuilder;
@@ -208,6 +210,8 @@ public class WayfService extends HttpServlet {
             // Initialize OpenSAML 2 library
             //
             DefaultBootstrap.bootstrap();   
+            // Re-initialize ESAPI with our own config overriding SAML2 cofnig
+            ESAPI.initialize("edu.internet2.middleware.shibboleth.wayf.WayfESAPISecurityConfig");
         
             BasicParserPool parser = new BasicParserPool();
             parser.setNamespaceAware(true);
