@@ -31,7 +31,7 @@ Object errorText = request.getAttribute("errorText");
 <logic:notEmpty name="requestURL">
 <p class="error">Discovery Service failure at (<esapi:encodeForHTML><%=requestURL%></esapi:encodeForHTML>)</p>
 
-<p><esapi:encodeForHTML><%=errorText%></esapi:encodeForHTML></p>
+<p><%=errorText%></p>
 </logic:notEmpty>
 <logic:empty name="requestURL">
 <p class="error">The Discovery Service should not be called directly</p>
