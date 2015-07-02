@@ -48,6 +48,13 @@ Object errorText = request.getAttribute("errorText");
 <logic:notEmpty name="requestURL">
 <p class="error">Discovery Service failure at (<esapi:encodeForHTML><%=requestURL%></esapi:encodeForHTML>)</p>
 
+<% /*
+ WayfError is already preformatted correctly escaped HTML - does not need
+ ESAPI (and ESAPI otherwise breaks HTML formatting already included in
+ error messages).
+
+ So esapi:encodeForHTML is intentionally omitted on errorText
+*/ %>
 <p><%=errorText%></p>
 </logic:notEmpty>
 <logic:empty name="requestURL">
