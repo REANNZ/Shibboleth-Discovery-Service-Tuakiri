@@ -393,7 +393,7 @@ Or choose from a list:
                 <th>organization</th>
                </tr>
                <tr><td>
-                 <select name="FedSelector" size="10" id="FedSelect" tabindex="30" 
+                 <select name="FedSelector" size="16" id="FedSelect" tabindex="30" 
                              onchange="changedFed(this.form.origin,
                                                   this.form.FedSelector[this.form.FedSelector.selectedIndex].value);">
                    <logic:iterate id="siteset" name="siteLists">
@@ -421,7 +421,7 @@ Or choose from a list:
                    </logic:notPresent>
                  </select></td><td>
                  <input type="hidden" name="action" value="selection" />
-                 <select name="origin" size="10" id="originIdp" tabindex="40"> 
+                 <select name="origin" size="16" id="originIdp" tabindex="40"> 
                    <logic:present name="sites" scope="request">
                      <logic:iterate id="site" name="sites">
                        <option value="<esapi:encodeForHTMLAttribute><jsp:getProperty name="site" property="name" /></esapi:encodeForHTMLAttribute>">
