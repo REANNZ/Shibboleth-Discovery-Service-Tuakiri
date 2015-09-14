@@ -51,6 +51,11 @@
      this instead of the actual client IP if the contents of this header
      conforms to the syntatic format of an IP address.
 
+     gaID sets the tracking ID Google Analytics code would use on the Discovery
+     Service page.  Setting this to non-empty value makes wayf.jsp emit the
+     Google Analytics tracking code onto the DS UI page.  Keep unset or empty
+     string to disable Google Analytics for the DS page.
+
      THIS SETTING IS SYSTEM WIDE ONLY.
 -->
 
@@ -63,6 +68,7 @@
             showUnusableIdPs="false"
             defaultFederation="FirstSite"
             useForwardedFor="false"
+            gaID=""
             >
             <SearchIgnore>
                 <IgnoreText>Institution</IgnoreText>

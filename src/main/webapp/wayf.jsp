@@ -154,6 +154,19 @@ Object returnIDParam = request.getAttribute("returnIDParam");
 <head>
     <link rel="stylesheet" title="normal" type="text/css"
     href="wayf.css" /> <title>Identity Provider Selection</title>
+<% /* emit the Google Analytics code if the gaID is set in the request */%>
+<logic:present name="gaID" scope="request">
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', '<esapi:encodeForJavaScript><%= (String)request.getAttribute("gaID") %></esapi:encodeForJavaScript>', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</logic:present>
     </head>
 
 <body>
