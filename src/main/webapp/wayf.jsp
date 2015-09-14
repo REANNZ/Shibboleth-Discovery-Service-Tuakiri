@@ -406,7 +406,7 @@ Or choose from a list:
                 <th>organization</th>
                </tr>
                <tr><td>
-                 <select name="FedSelector" size="16" id="FedSelect" tabindex="30" 
+                 <select name="FedSelector" size="16" id="FedSelect" style="overflow-y: scroll;" tabindex="30"
                              onchange="changedFed(this.form.origin,
                                                   this.form.FedSelector[this.form.FedSelector.selectedIndex].value);">
                    <logic:iterate id="siteset" name="siteLists">
@@ -434,7 +434,7 @@ Or choose from a list:
                    </logic:notPresent>
                  </select></td><td>
                  <input type="hidden" name="action" value="selection" />
-                 <select name="origin" size="16" id="originIdp" tabindex="40"> 
+                 <select name="origin" size="16" id="originIdp" tabindex="40" style="overflow-y: scroll;" onchange="readjustListAfterChange(event, this);">
                    <logic:present name="sites" scope="request">
                      <logic:iterate id="site" name="sites">
                        <option value="<esapi:encodeForHTMLAttribute><jsp:getProperty name="site" property="name" /></esapi:encodeForHTMLAttribute>">
@@ -573,6 +573,106 @@ Need assistance? Send mail to <a tabindex="120" href="mailto:user@domain">admini
         <div class="logo"><img src="images/internet2.gif" alt="Internet2" /></div>
     </div>
 
+
+<logic:present name="showComments" scope="Request">
+
+<!--PROGRAMMING NOTE
+
+  Safari scrolling fix
+
+  We need to implement a work-around for broken SELECT list scrolling in Safari.
+
+  This is a known bug in Safari 8 - documented e.g. at
+  http://stackoverflow.com/questions/27109190/safari-8-multiple-select-scrolling-issue
+
+  For SELECT lists that have a SIZE attribute specified, Safari does not scroll
+  the list when the user gets past the last visible element (e.g., via using the
+  down arrow or typing the initial letter of an entry in the list).
+
+  The solution described on the above link only handles the up and down keys
+  and no other methods of selection (e.g., typing initial letters of name), so
+  instead of hooking into the keyboard events, we are listening for the change
+  event - adding the function as an onchange hook.
+
+  Note also that the scrollByLines method is officially defined only for
+  Window, not abitrary (SELECT) element.
+  And consequently this method is visible on Safari but not on other browsers
+  (and results into JS errors).  Therefore, the code checks for presence of the
+  scrollByLines method and only engages if this method is present.  Which means
+  it may only act on Safari - but, other browsers do not have the scrolling bug,
+  so, no action is required there.
+
+  Also note that Safari jumps to the top of the list when making a selection
+  ABOVE the currently visible part of the list.
+
+  This may cause some erratic scrolling behaviour when the user is going
+  through the list UP one-by-one - when reaching the top of the screen, Safari
+  automatically jumps to the top, and this function may instead end up going
+  down - if the top position Safari scrolled to is too high for the entry
+  selected.
+
+  And finally note, we need to initialize the scrolling fix by populating the
+  scrollLineHeight variable - by attempting to scroll one line down and up
+  again and measuring the pixel distance - needed as some scrolling information
+  is measured in pixels and some in lines.
+
+  And as the scrolling can only be done with a list long enough to scroll, we
+  have to reinitialize whenever the list changes (when a different federation is
+  selected) - hence the multiple calls to refreshSrollParams.
+
+  And all of the above applies only when the DS is run in the ListOfLists mode
+  - the single list displayed otherwise does not have a size element and
+  thefore this scrolling issue is not triggered.  And in that case, we do not
+  render the code - it is only active when siteLists is present in the request.
+
+-->
+
+</logic:present>
+
+<logic:present name="siteLists" scope="request">
+<script language="javascript" type="text/javascript">
+<!--
+
+// global variable to hold the scrollLineHeight
+var scrollLineHeight;
+
+function refreshSrollParams(idpSelector) {
+    scrollLineHeight = undefined;
+
+    // only attempt scrolling on browsers where JavaScript supports scrollByLines on SELECT elements
+    if ( idpSelector.scrollByLines ) {
+	// NOTE: this only works if the SELECT element has: style="overflow-y: scroll;"
+	var scrollTopOld = idpSelector.scrollTop;
+	idpSelector.scrollByLines(1);
+	scrollLineHeight = idpSelector.scrollTop - scrollTopOld;
+	idpSelector.scrollByLines(-1);
+    };
+};
+
+// invoke the function now
+var idpSelector = document.getElementById('originIdp');
+refreshSrollParams(idpSelector)
+
+
+function readjustListAfterChange(event, theSelect) {
+    // only proceed if scrollLineHeight is properly initialized and the SELECT
+    // element supports scrolling
+    if (scrollLineHeight && (scrollLineHeight > 0 ) && ( theSelect.scrollTop>=0)  )  {
+        var scrolledToLine = (theSelect.scrollTop / scrollLineHeight).toFixed(0);
+        if (theSelect.selectedIndex < scrolledToLine) {
+            theSelect.scrollByLines( theSelect.selectedIndex - scrolledToLine );
+        } else if ( theSelect.selectedIndex >= scrolledToLine + theSelect.size) {
+            theSelect.scrollByLines( theSelect.selectedIndex+1 - theSelect.size - scrolledToLine );
+        };
+    };
+    return true;
+}
+
+-->
+</script>
+</logic:present>
+
+
 <logic:present name="showComments" scope="Request">
 
 <!--PROGRAMMING NOTE
@@ -636,6 +736,7 @@ function changedFed(X, Selected) {
     }
   
   </logic:notPresent>
+  refreshSrollParams(X);
   
 }
 
