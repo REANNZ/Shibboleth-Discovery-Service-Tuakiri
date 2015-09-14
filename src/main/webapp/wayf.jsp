@@ -631,7 +631,7 @@ Search results:
 
   And as the scrolling can only be done with a list long enough to scroll, we
   have to reinitialize whenever the list changes (when a different federation is
-  selected) - hence the multiple calls to refreshSrollParams.
+  selected) - hence the multiple calls to refreshScrollParams.
 
   And all of the above applies only when the DS is run in the ListOfLists mode
   - the single list displayed otherwise does not have a size element and
@@ -649,7 +649,7 @@ Search results:
 // global variable to hold the scrollLineHeight
 var scrollLineHeight;
 
-function refreshSrollParams(idpSelector) {
+function refreshScrollParams(idpSelector) {
     scrollLineHeight = undefined;
 
     // only attempt scrolling on browsers where JavaScript supports scrollByLines on SELECT elements
@@ -664,7 +664,7 @@ function refreshSrollParams(idpSelector) {
 
 // invoke the function now
 var idpSelector = document.getElementById('originIdp');
-refreshSrollParams(idpSelector)
+refreshScrollParams(idpSelector)
 
 
 function readjustListAfterChange(event, theSelect) {
@@ -749,7 +749,7 @@ function changedFed(X, Selected) {
     }
   
   </logic:notPresent>
-  refreshSrollParams(X);
+  refreshScrollParams(X);
   
 }
 
