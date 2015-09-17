@@ -62,6 +62,9 @@ public class HandlerConfig {
 
     /** Do we look for an X-Forwarded-For header injected by load balancers? */
     private final boolean useForwardedFor;
+
+    /** The Google Analytics ID to use on the Disovery Service page */
+    private String gaID;
  
     /** Build the 'default default' configuation. */ 
     public HandlerConfig() {
@@ -77,6 +80,7 @@ public class HandlerConfig {
         warnOnBadBinding = false;
         defaultFederation = null;
         useForwardedFor = false;
+        gaID = null;
     }
         
         
@@ -168,6 +172,13 @@ public class HandlerConfig {
         } else {
                 useForwardedFor = defaultValue.getUseForwardedFor();
         }
+
+        attribute = config.getAttribute("gaID");
+        if (attribute != null && !attribute.equals("")) {
+                gaID = attribute;
+        } else {
+                gaID = defaultValue.gaID;
+        }
     }
     
 
@@ -257,4 +268,13 @@ public class HandlerConfig {
         return useForwardedFor;  
     }
 
+    /**
+     * The Google Analytics ID to use on the Disovery Service page
+     * @return the Google Analytics ID to use on the Disovery Service page
+     */
+    public String getGAID() {
+            return gaID;
+    }
+
 }
+

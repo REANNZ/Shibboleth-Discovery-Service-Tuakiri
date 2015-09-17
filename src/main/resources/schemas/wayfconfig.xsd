@@ -48,6 +48,7 @@
         <xs:attribute name="warnOnBadBinding" type="xs:boolean" use="optional" />
         <xs:attribute name="defaultFederation" type="xs:string" use="optional" />
         <xs:attribute name="useForwardedFor" type="xs:boolean" use="optional" />
+        <xs:attribute name="gaID" type="xs:string" use="optional" />
     </xs:complexType>
 
     <xs:element name="WayfConfig" >

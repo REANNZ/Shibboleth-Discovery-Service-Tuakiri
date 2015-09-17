@@ -968,6 +968,9 @@ public class DiscoveryServiceHandler {
             if (dsVersion != null) { req.setAttribute("dsVersion", dsVersion); };
             if (localHostName != null) { req.setAttribute("internalHostname", localHostName); };
 
+            // pass Google Analytics ID to the JSP page to render the GA script if set in config
+            if (config.getGAID() != null && !config.getGAID().isEmpty()) { req.setAttribute("gaID", config.getGAID()); };
+
             LOG.debug("Displaying WAYF selection page.");
             RequestDispatcher rd = req.getRequestDispatcher(config.getJspFile());
 
