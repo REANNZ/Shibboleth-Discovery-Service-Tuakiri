@@ -179,13 +179,12 @@ Object returnIDParam = request.getAttribute("returnIDParam");
 <div id="background_c">
 
     <div class="head">
-        <div class="logo"><img src="/static/images/tuakiri.png" alt="Tuakiri New Zealand Federation" /></div>
+        <div class="logo"><img src="/static/images/tuakiri.png" alt="REANNZ Tuakiri" /></div>
 
 <!-- Tuakiri links -->
         <ul class="ds_links">
-                <li><a target="_blank" href="https://www.tuakiri.ac.nz">Home</a></li>
-                <li><a target="_blank" href="https://tuakiri.ac.nz/confluence/display/Tuakiri/About+Us">About</a></li>
-                <li><a target="_blank" href="https://tuakiri.ac.nz/confluence/display/Tuakiri/Support+Desk">Support</a></li>
+                <li><a target="_blank" href="https://reannz.co.nz/services/network-cloud-services/tuakiri/">About</a></li>
+                <li><a target="_blank" href="mailto:tuakiri@reannz.co.nz">Support</a></li>
         </ul>
 
        <h2>Select your Home Organisation </h2>
