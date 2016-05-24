@@ -29,12 +29,11 @@ Object errorText = request.getAttribute("errorText");
 
 <div class="error_head">
 <!-- <img src="images/logo.jpg" alt="Shibboleth" /> -->
-<div class="logo"><img src="/static/images/tuakiri.png" alt="Tuakiri" /></div>
-<div class="NZAF_title"><h1>New Zealand Access Federation</h1></div>
+<div class="logo"><img src="/static/images/tuakiri.png" alt="REANNZ Tuakiri" /></div>
+<!-- <div class="NZAF_title"><h1>New Zealand Access Federation</h1></div> -->
 <ul class="ds_links">
-	<li><a target="_blank" href="https://www.tuakiri.ac.nz">Home</a></li>
-	<li><a target="_blank" href="https://tuakiri.ac.nz/confluence/display/Tuakiri/About+Us">About</a></li>
-	<li><a target="_blank" href="https://tuakiri.ac.nz/confluence/display/Tuakiri/Support+Desk">Support</a></li>
+	<li><a target="_blank" href="https://reannz.co.nz/services/network-cloud-services/tuakiri/">About</a></li>
+	<li><a target="_blank" href="mailto:tuakiri@reannz.co.nz">Support</a></li>
 </ul>
 <h2>Discovery Service Failure</h2>
 </div>
@@ -43,7 +42,7 @@ Object errorText = request.getAttribute("errorText");
 
 <p>The inter-institutional access system experienced a technical failure.</p>
 
-<p>Please email <a href="mailto:support@tuakiri.ac.nz">Tuakiri support</a> and include the following error message:</p>
+<p>Please email <a href="mailto:tuakiri@reannz.co.nz">Tuakiri support</a> and include the following error message:</p>
 
 <logic:notEmpty name="requestURL">
 <p class="error">Discovery Service failure at (<esapi:encodeForHTML><%=requestURL%></esapi:encodeForHTML>)</p>

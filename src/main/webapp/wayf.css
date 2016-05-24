@@ -15,20 +15,18 @@ body {
 }
 
 div#background_a {
-	background:url('images/DS_background_mid.png') top left repeat-y; 
+	border: 1px solid black;
+	border-radius: 10px;
 }
 
 div#background_b {
-	background:url('images/DS_background_top.png') top left no-repeat;
 }
 
 div#background_c {
-	background:url('images/DS_background_bottom.png') bottom left no-repeat;
 	padding:1px 0;
 }
 
 div#reset_background_c {
-	background:url('images/reset_background_bottom.png') bottom left no-repeat; 
 }
 
 p {
@@ -70,7 +68,7 @@ h1 {
 	font-size: 26px;
 	font-weight: bold;
 	font-family: "Trebuchet MS", "Tahoma", "Helvetica", "Arial", sans-serif;
-	color: #969678;
+	color: #00B9E4;
 }
 
 h2 { 
@@ -83,7 +81,7 @@ h2 {
 	clear:left;
 	border-top-style: solid;
 	border-top-width: 4px;
-	border-top-color: #7CAB1D;
+	border-top-color: #00B9E4;
 }
 
 h3 { 
@@ -120,13 +118,14 @@ span.option {
 
 input#clear {
 	margin-left: 532px;
-	background:url('images/DS_button.png') top left no-repeat;
+	background-color: #00B9E4;
+	color:#FFFFFF;
+	border:none;
+	border-radius: 8px;
 	height:24px;
 	width:62px;
-	border:none;
 	font-size:14px;
 	font-weight:bold;
-	color:#F2F2F2;
 	cursor:auto;
 }
 
@@ -149,13 +148,15 @@ select#originIdp {
 
 input.select {
 	margin-left: 370px; 
-	background:url('images/DS_button.png') top left no-repeat;
+	background-color: #00B9E4;
+	color: #FFFFFF;
+	border:none;
+	border-radius: 8px;
 	height:24px;
 	width:62px;
-	border:none;
 	font-size:14px;
 	font-weight:bold;
-	color:#F2F2F2;
+	cursor:auto;
 }
 
 input.select:hover {
