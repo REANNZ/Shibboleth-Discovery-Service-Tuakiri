@@ -17,8 +17,8 @@ package edu.internet2.middleware.shibboleth.wayf;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URISyntaxException;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.net.InetAddress;
@@ -554,7 +554,7 @@ public class DiscoveryServiceHandler {
             // Given something so we have to police it.
             //
             String nameNoParam = returnName;
-            URL providedReturnURL;
+            URI providedReturnURI;
             int index = nameNoParam.indexOf('?');
             boolean found = false;
             
@@ -563,14 +563,14 @@ public class DiscoveryServiceHandler {
             }
             
             try {
-                providedReturnURL = new URL(nameNoParam);                
-            } catch (MalformedURLException e) {
+                providedReturnURI = new URI(nameNoParam);
+            } catch (URISyntaxException e) {
                 throw new WayfException("Couldn't parse provided return name " + nameNoParam, e);
             }
             
             
             for (DiscoveryResponse disc: discoveryServices) {
-                if (equalsURL(disc, providedReturnURL)) {
+                if (equalsURI(disc, providedReturnURI)) {
                     found = true;
                     break;
                 }
@@ -671,13 +671,13 @@ public class DiscoveryServiceHandler {
 
     /**
      * Helper function to see whather the provided endpoint in the metadata matches the 
-     * provided return URL in the request.
+     * provided return URI in the request.
      * 
      * @param discovery
      * @param providedName
      * @return
      */
-    private static boolean equalsURL(DiscoveryResponse discovery, URL providedName) {
+    private static boolean equalsURI(DiscoveryResponse discovery, URI providedName) {
         
         //
         // Nothing provided - no match
@@ -686,10 +686,10 @@ public class DiscoveryServiceHandler {
             return false;
         }
         
-        URL discoveryName;
+        URI discoveryName;
         try {
-            discoveryName = new URL(discovery.getLocation());
-        } catch (MalformedURLException e) {
+            discoveryName = new URI(discovery.getLocation());
+        } catch (URISyntaxException e) {
             //
             // Something bad happened.  Log it (it is only of interest to the sysadmin, not to the user)
             //
