@@ -42,6 +42,11 @@
     <dependencies>
         <!-- Compile dependencies -->
         <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.2</version>
+        </dependency>
+        <dependency>
             <groupId>org.opensaml</groupId>
             <artifactId>opensaml</artifactId>
             <version>2.5.3</version>
